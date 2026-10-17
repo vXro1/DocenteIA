@@ -8,7 +8,9 @@ const ILUSTRACION = { error: robotError, vacio: robotEsperando }
 export function EstadoVista({ tipo = 'vacio', titulo, mensaje, children }) {
   return (
     <div className={`estado-vista estado-vista--${tipo}`} role={tipo === 'error' ? 'alert' : undefined}>
-      <img src={ILUSTRACION[tipo]} alt="" aria-hidden="true" className="estado-vista__ilustracion" />
+      <span className="estado-vista__robot" aria-hidden="true">
+        <img src={ILUSTRACION[tipo]} alt="" className="estado-vista__ilustracion" />
+      </span>
       <strong className="estado-vista__titulo">{titulo}</strong>
       {mensaje && <p className="estado-vista__mensaje">{mensaje}</p>}
       {children}

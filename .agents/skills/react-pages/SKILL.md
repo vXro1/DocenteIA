@@ -11,6 +11,9 @@ description: Construir las páginas React de DOCENTIA, organizar su composición
 | ---------------------- | -------------------------------- | ------------------------ | ----- |
 | Login                  | `/login`                         | público                  | `POST /sesiones` |
 | Mi evaluación          | `/mi-evaluacion`                 | DOCENTE                  | `GET /expedientes/propio` |
+| Inicio (KPIs)          | `/inicio`                        | COORDINADOR, VICERRECTOR | `GET /kpis`, `GET /periodos-academicos`, ventanas |
+| Evaluación de estudiantes | `/importaciones`              | COORDINADOR (carga); VICERRECTOR (historial) | `/importaciones/*` |
+| Usuarios               | `/usuarios`, `/usuarios/nuevo`, `/usuarios/:idUsuario` | VICERRECTOR | `/usuarios` |
 | Docentes               | `/docentes`                      | COORDINADOR, VICERRECTOR | `GET /docentes` (+ `GET /facultades` para filtrar, solo vicerrector) |
 | Expediente del docente | `/docentes/:idDocente`           | COORDINADOR, VICERRECTOR | `GET /expedientes/{id}` |
 | Calificar docente      | `/docentes/:idDocente/calificar` | COORDINADOR, VICERRECTOR | `GET`/`PUT /docentes/{id}/calificaciones/{fuente}` |

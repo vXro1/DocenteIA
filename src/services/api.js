@@ -3,13 +3,17 @@ const CLAVE_TOKEN = 'docentia.token'
 
 let alExpirarSesion = () => {}
 
-/** Error de la API con el formato ErrorResponse del backend: { mensaje, errores }. */
+/**
+ * Error de la API con el formato ErrorResponse del backend: { mensaje, errores }.
+ * `datos` guarda el cuerpo completo: la etapa cerrada (409) y el CSV rechazado (422) traen más campos.
+ */
 export class ApiError extends Error {
-  constructor(status, mensaje, errores = {}) {
+  constructor(status, mensaje, errores = {}, datos = null) {
     super(mensaje)
     this.name = 'ApiError'
     this.status = status
     this.errores = errores
+    this.datos = datos
   }
 }
 
@@ -46,11 +50,13 @@ async function leerCuerpo(respuesta) {
 }
 
 /**
- * Hace una petición JSON a la API. Devuelve null en 204 y lanza ApiError si la respuesta no es ok.
+ * Hace una petición a la API. El cuerpo va como JSON, salvo un FormData, que el navegador envía
+ * como multipart/form-data. Devuelve null en 204 y lanza ApiError si la respuesta no es ok.
  */
 export async function peticion(ruta, { metodo = 'GET', cuerpo, publica = false } = {}) {
+  const esFormulario = cuerpo instanceof FormData
   const cabeceras = { Accept: 'application/json' }
-  if (cuerpo !== undefined) cabeceras['Content-Type'] = 'application/json'
+  if (cuerpo !== undefined && !esFormulario) cabeceras['Content-Type'] = 'application/json'
   const token = leerToken()
   if (token && !publica) cabeceras.Authorization = `Bearer ${token}`
 
@@ -59,7 +65,7 @@ export async function peticion(ruta, { metodo = 'GET', cuerpo, publica = false }
     respuesta = await fetch(`${URL_BASE}${ruta}`, {
       method: metodo,
       headers: cabeceras,
-      body: cuerpo !== undefined ? JSON.stringify(cuerpo) : undefined,
+      body: cuerpo === undefined || esFormulario ? cuerpo : JSON.stringify(cuerpo),
     })
   } catch {
     throw new ApiError(0, 'No se pudo conectar con el servidor. Revisa tu conexión e intenta de nuevo.')
@@ -71,10 +77,16 @@ export async function peticion(ruta, { metodo = 'GET', cuerpo, publica = false }
   if (respuesta.ok) return datos
 
   if (respuesta.status === 401 && !publica) alExpirarSesion()
+  // Un 5xx sin cuerpo JSON no viene de la API sino del proxy o del balanceador: el servidor no está arriba.
+  const sinServidor = respuesta.status >= 500 && !datos
   throw new ApiError(
     respuesta.status,
-    datos?.mensaje ?? 'Ocurrió un error inesperado. Intenta de nuevo.',
+    datos?.mensaje ??
+      (sinServidor
+        ? 'El servidor de DOCENTIA no está disponible en este momento. Intenta de nuevo en unos minutos.'
+        : 'Ocurrió un error inesperado. Intenta de nuevo.'),
     datos?.errores ?? {},
+    datos,
   )
 }
 
@@ -82,5 +94,6 @@ export const api = {
   get: (ruta) => peticion(ruta),
   post: (ruta, cuerpo, opciones) => peticion(ruta, { metodo: 'POST', cuerpo, ...opciones }),
   put: (ruta, cuerpo) => peticion(ruta, { metodo: 'PUT', cuerpo }),
+  patch: (ruta, cuerpo) => peticion(ruta, { metodo: 'PATCH', cuerpo }),
   delete: (ruta) => peticion(ruta, { metodo: 'DELETE' }),
 }

@@ -21,9 +21,10 @@ Todas las respuestas de error tienen la forma `ErrorResponse`:
 | ------ | ----------------------------------------------------------- | --------------------------------------------- |
 | 400    | Validación (`errores` por campo) o datos incoherentes       | Mostrar `errores[campo]` junto a cada campo y `mensaje` arriba |
 | 401    | Sin token, token vencido o credenciales inválidas           | En login: mostrar `mensaje`. En otro lado: cerrar sesión y llevar a `/login` |
-| 403    | Rol sin permiso ("No tienes permiso para realizar esta acción") | Mostrar mensaje; no reintentar             |
+| 403    | Rol sin permiso ("No tienes permiso para realizar esta acción"), o contraseña temporal sin cambiar ("Debes cambiar tu contraseña temporal antes de continuar") | Mostrar mensaje; no reintentar. Con contraseña temporal, `ProtectedRoute` lleva a `/cambiar-contrasena` |
 | 404    | No existe o está fuera del alcance                          | Estado "no encontrado"                        |
 | 409    | Regla de negocio (nombre duplicado, sin periodo activo, facultad con programas) | Mostrar `mensaje` tal cual |
+| 429    | Demasiados inicios de sesión fallidos (por correo o por IP). Trae `Retry-After` en segundos | Mostrar `mensaje` ("Espera N minutos…") |
 
 ## Sesiones
 
@@ -31,18 +32,24 @@ Todas las respuestas de error tienen la forma `ErrorResponse`:
 | ------ | ------------------ | -------- | ---------------- |
 | POST   | `/sesiones`        | público  | `{ correo, contrasena }` → **201** `SesionResponse` |
 | GET    | `/sesiones/actual` | cualquiera autenticado | → `UsuarioSesion` |
+| PUT    | `/sesiones/actual/contrasena` | cualquiera autenticado | `{ contrasenaActual, contrasenaNueva }` → `SesionResponse` **nueva** (reemplazar el token); 400 `errores.contrasenaActual` / `errores.contrasenaNueva` |
 
 ```ts
 SesionResponse = { token: string, usuario: UsuarioSesion }
 UsuarioSesion  = { idUsuario, nombreCompleto, correo, rol: "VICERRECTOR"|"COORDINADOR"|"DOCENTE",
-                   idFacultad: number|null, idPrograma: number|null }
+                   idFacultad: number|null, idPrograma: number|null, debeCambiarContrasena: boolean }
 ```
+
+Con `debeCambiarContrasena` la sesión solo puede llamar a `GET /sesiones/actual` y al cambio de
+contraseña; lo demás responde 403. Las contraseñas que la vicerrectoría asigna a otra persona (crear
+o restablecer) son temporales. Una cuenta desactivada pierde el acceso de inmediato (401).
 
 ## Docentes (VICERRECTOR, COORDINADOR)
 
 | Método | Ruta                       | Notas |
 | ------ | -------------------------- | ----- |
 | GET    | `/docentes?idFacultad=`    | `idFacultad` opcional; ignorado para coordinador. Ordenados por nombre |
+| GET    | `/docentes/seguimiento?idFacultad=` | Mismo alcance + promedio del periodo activo: `{ periodo: {idPeriodo,nombre}|null, docentes: [{ docente: DocenteResponse, promedio: PromedioPonderadoResponse|null }] }` |
 | GET    | `/docentes/{idDocente}`    | 404 si fuera del alcance |
 
 ```ts
@@ -63,7 +70,8 @@ GET devuelve **204 sin cuerpo** si aún no hay calificación (no es error: formu
 ```ts
 CalificacionRequest = { dominioDisciplinar, planeacionAcademica, metodologiaEnsenanza,
                         evaluacionAprendizaje, compromisoInstitucional, // 1.0–5.0, 1 decimal
-                        observacion?: string /* ≤1000 */ }
+                        observacion?: string /* ≤1000 */,
+                        motivoCorreccion?: string /* ≤500; solo si ya existía y las notas cambian */ }
 CalificacionResponse = { idCalificacion, idDocente, nombrePeriodo, fuente, ...5 aspectos,
                          observacion: string|null, fechaActualizacion }
 ```
@@ -107,8 +115,8 @@ ExpedienteDocenteResponse = { docente, periodo|null, promedio|null, notasPorFuen
 
 ```ts
 PeriodoAcademicoRequest = { nombre /* ≤20 */, fechaInicio, fechaFin,
-  etapas: { tipoEtapa: "EVALUACION_ESTUDIANTES"|"CALIFICACION_COORDINACION"|
-            "CALIFICACION_VICERRECTORIA"|"RETROALIMENTACION", fechaApertura, fechaCierre }[] }
+  etapas: { tipoEtapa: "RECOLECCION_CALIFICACIONES"|"REVISION_HALLAZGOS"|
+            "AGENDA_CITAS"|"FIRMA_ACTAS", fechaApertura, fechaCierre }[] }
 PeriodoAcademicoResponse = { idPeriodo, nombre, fechaInicio, fechaFin, esActivo, etapas: [...] }
 ```
 
@@ -144,6 +152,27 @@ PonderacionResponse = { periodo: PeriodoResumen, pesoEstudiantes, pesoCoordinaci
 FacultadResponse = { idFacultad, nombre }
 ProgramaResponse = { idPrograma, nombre, idFacultad, nombreFacultad }
 ```
+
+## Sprint 3, semana 1 (K1, B2, D2, C4, C5, I5)
+
+Referencia completa: `../docentia-backend/docs/api-sprint3-semana1.md` (ramas `feature/*`).
+
+| Método | Ruta | Rol | Notas |
+| ------ | ---- | --- | ----- |
+| GET | `/periodos-academicos/activo/ventanas` | autenticado | Las 4 etapas `{ etapa, nombreEtapa, fechaApertura, fechaCierre, abierta }`; 409 sin periodo activo |
+| GET | `/docentes/{id}/calificaciones/correcciones?idPeriodo=` | COORDINADOR, VICERRECTOR | Historial, más reciente primero |
+| GET/POST | `/usuarios?rol=` | VICERRECTOR | `UsuarioRequest = { nombreCompleto, correo, rol, idFacultad, idPrograma, contrasena }`; 409 correo duplicado |
+| GET/PUT | `/usuarios/{id}` | VICERRECTOR | `contrasena` opcional en PUT; 409 si alguien cambia su propio rol. `UsuarioResponse` trae `esActivo` y `debeCambiarContrasena` |
+| PATCH | `/usuarios/{id}/estado` | VICERRECTOR | `{ esActivo }`; 409 si alguien se desactiva a sí mismo |
+| POST | `/importaciones/csv/validar` | COORDINADOR | multipart: `archivo`, `mapeo?` (JSON), `plantilla?`; 200 con el reporte (mirar `valido`) |
+| POST | `/importaciones/csv` | COORDINADOR | 200 importado / 422 rechazado (mismo cuerpo `{ importacion, reporte }`) / 409 etapa / 413 tamaño |
+| GET | `/importaciones?idPeriodo=` | COORDINADOR (suyas), VICERRECTOR (todas) | |
+| GET/POST | `/importaciones/plantillas` | COORDINADOR | POST con un nombre existente la reemplaza |
+| DELETE | `/importaciones/plantillas/{id}` | COORDINADOR | 204 |
+| GET | `/kpis?periodoId=&facultadId=` | COORDINADOR (su facultad), VICERRECTOR | 4 indicadores `{ valor, valorAnterior, variacion }`; 409 sin periodo activo |
+
+Acción bloqueada por etapa → **409** con `{ mensaje, errores, etapa, nombreEtapa, fechaApertura,
+fechaCierre, fechaActual }`. `ApiError.datos` conserva ese cuerpo completo.
 
 ## Usuarios de desarrollo (perfil `dev`, contraseña `Docentia2026*`)
 

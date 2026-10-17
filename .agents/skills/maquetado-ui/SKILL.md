@@ -84,6 +84,8 @@ Ilustraciones del robot en `src/assets/ilustraciones/`: `saludo`, `pensando`, `e
 | Calificar | `/docentes/:id/calificar` | Implementada (coordinación y vicerrectoría) |
 | Profesor | `/mi-evaluacion` | Implementada (sin nota separada de estudiantes) |
 | Login | `/login` | No está en el maquetado; hecha con sus tokens |
-| Inicio (KPIs, ranking, distribución), Comparación de programas | — | Sin endpoints de agregados |
+| Inicio (KPIs) | `/inicio` | Implementada: filtros de periodo y facultad y las cuatro tarjetas. Sin filtro de programa ni buscador (la API de KPIs no los recibe). Añadido: panel de etapas del periodo |
+| Inicio (evolución, distribución, ranking), Comparación de programas | — | Sin endpoints |
+| Carga del CSV de estudiantes, Usuarios, Historial de correcciones | `/importaciones`, `/usuarios`, expediente | No están en el maquetado; hechas con sus tokens |
 | DocentIA Insights, Mis hallazgos | — | Sin backend de IA ni comentarios |
 | Agenda de turnos, Mi cita, Acta y firma | — | Sin backend |

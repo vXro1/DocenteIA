@@ -28,6 +28,26 @@ export function formatearFecha(fechaIso) {
   return formatoFecha.format(new Date(anio, mes - 1, dia)).replace('.', '')
 }
 
+/** "2026-10-20T10:15:42.12" (hora de Colombia) → "20 oct 2026, 10:15". */
+export function formatearFechaHora(fechaHoraIso) {
+  if (!fechaHoraIso) return ''
+  const hora = fechaHoraIso.slice(11, 16)
+  return hora ? `${formatearFecha(fechaHoraIso)}, ${hora}` : formatearFecha(fechaHoraIso)
+}
+
+/** 1234 → "1.234". Devuelve "—" si no hay valor. */
+export function formatearEntero(valor) {
+  return valor === null || valor === undefined ? '—' : Number(valor).toLocaleString('es-CO')
+}
+
+/** Variación con signo: (0.29, true) → "+0,29"; (-2, false) → "−2". */
+export function formatearVariacion(variacion, conDecimales) {
+  const numero = Number(variacion)
+  const signo = numero > 0 ? '+' : numero < 0 ? '−' : ''
+  const absoluto = Math.abs(numero)
+  return `${signo}${conDecimales ? formatearNota(absoluto) : formatearEntero(absoluto)}`
+}
+
 export function iniciales(nombre = '') {
   return nombre
     .split(' ')
@@ -54,4 +74,9 @@ export function listarFuentes(fuentes = []) {
   const nombres = fuentes.map((fuente) => ETIQUETA_FUENTE[fuente] ?? fuente)
   if (nombres.length <= 1) return nombres.join('')
   return `${nombres.slice(0, -1).join(', ')} y ${nombres.at(-1)}`
+}
+
+/** Texto en minúsculas y sin tildes, para buscar sin distinguir "José" de "jose". */
+export function normalizarTexto(texto = '') {
+  return texto.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
 }

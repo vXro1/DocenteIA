@@ -39,8 +39,12 @@ Ruta de inicio tras login según rol:
 | Rol           | Inicio                 | Navegación (Sidebar)                                                    |
 | ------------- | ---------------------- | ----------------------------------------------------------------------- |
 | `DOCENTE`     | `/mi-evaluacion`       | Mi evaluación                                                           |
-| `COORDINADOR` | `/docentes`            | Docentes, Ponderación (lectura), Periodos (lectura)                     |
-| `VICERRECTOR` | `/docentes`            | Docentes, Periodos, Ponderación, Facultades, Programas                  |
+| `COORDINADOR` | `/inicio`              | Inicio, Docentes, Evaluación de estudiantes (`/importaciones`)          |
+| `VICERRECTOR` | `/inicio`              | Inicio, Docentes, Cargas de estudiantes (`/importaciones`), Usuarios    |
+
+Pendientes de pantalla (ya hay endpoints): Periodos, Ponderación, Facultades, Programas.
+`/usuarios`, `/usuarios/nuevo` y `/usuarios/:idUsuario` son solo VICERRECTOR. Si se edita el rol o el
+vínculo de alguien, su sesión abierta conserva el alcance anterior hasta que el token vence (8 h).
 
 Rutas de detalle:
 - `/docentes/:idDocente` → expediente completo (COORDINADOR, VICERRECTOR).

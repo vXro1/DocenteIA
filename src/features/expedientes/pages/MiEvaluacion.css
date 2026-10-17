@@ -33,10 +33,10 @@
 }
 
 .mi-evaluacion__rotulo {
-  font-size: 10.5px;
+  font-size: 11.5px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  font-weight: var(--peso-fuerte);
+  font-weight: var(--peso-semi);
   opacity: 0.7;
 }
 
@@ -50,7 +50,7 @@
 
 .mi-evaluacion__texto {
   font-size: 13px;
-  font-weight: var(--peso-ligero);
+  font-weight: var(--peso-normal);
   line-height: 1.55;
   opacity: 0.85;
 }
@@ -77,13 +77,13 @@
 
 .mi-evaluacion__fuentes strong {
   font-size: 13px;
-  font-weight: var(--peso-fuerte);
+  font-weight: var(--peso-semi);
   letter-spacing: -0.2px;
 }
 
 .mi-evaluacion__fuentes span {
   font-size: 11.5px;
-  font-weight: var(--peso-ligero);
+  font-weight: var(--peso-normal);
   opacity: 0.78;
 }
 
@@ -91,7 +91,7 @@
   padding: 4px 10px;
   border-radius: var(--radio-pildora);
   background: rgba(254, 251, 244, 0.18);
-  font-weight: var(--peso-fuerte);
+  font-weight: var(--peso-semi);
   white-space: nowrap;
   opacity: 1;
 }

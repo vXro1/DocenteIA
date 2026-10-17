@@ -42,11 +42,14 @@ resultado sin ver las notas individuales por fuente.
 - Ejecutar `npm run lint` y `npm run build`.
 - Resumir los archivos modificados y las pruebas realizadas.
 
-## Estado (2026-10-12)
+## Estado (2026-10-14)
 - Backend con demo de semana 1: sesiones, docentes, calificaciones de coordinación y vicerrectoría,
   expedientes, periodos, ponderaciones, facultades y programas.
 - Frontend: login con JWT, rutas por rol, layout del maquetado y pantallas Docentes, Expediente,
   Calificar y Mi evaluación conectadas a la API real.
+- Sprint 3, semana 1 (ramas `feature/*` del backend, aún sin unir a `develop`): Inicio con KPIs (I5),
+  usuarios (K1), ventanas de etapa y bloqueo (B2), corrección de notas e historial (D2) y carga del CSV
+  de estudiantes con mapeo de columnas y plantillas (C4, C5).
 - Maquetado en `design/DOCENTIA-standalone.html`; tokens en `src/styles/variables.css`.
   Las vistas sin backend están listadas en la skill `maquetado-ui`.
 - Pendiente: elegir herramienta de pruebas; crear el repo `docentia-frontend` en GitHub.

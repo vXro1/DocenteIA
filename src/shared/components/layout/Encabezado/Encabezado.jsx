@@ -1,8 +1,10 @@
+import { useTituloDocumento } from '../../../hooks/useTituloDocumento.js'
 import { usePeriodoActivo } from '../AppLayout/periodoContext.js'
 import './Encabezado.css'
 
 /** Encabezado de página del maquetado: miga, título, subtítulo y periodo activo. */
 export function Encabezado({ miga, titulo, subtitulo, children }) {
+  useTituloDocumento(titulo)
   const { periodo, cargando } = usePeriodoActivo()
   const nombrePeriodo = cargando ? '…' : (periodo?.nombre ?? 'Sin periodo activo')
 

@@ -1,6 +1,6 @@
 .expediente__vacio {
   font-size: 13px;
-  font-weight: var(--peso-ligero);
+  font-weight: var(--peso-normal);
   line-height: 1.5;
   color: var(--color-texto-tenue);
 }
@@ -69,13 +69,13 @@
 
 .fuentes__nombre strong {
   font-size: 13px;
-  font-weight: var(--peso-fuerte);
+  font-weight: var(--peso-semi);
   letter-spacing: -0.2px;
 }
 
 .fuentes__nombre span {
   font-size: 11.5px;
-  font-weight: var(--peso-ligero);
+  font-weight: var(--peso-normal);
   color: var(--color-texto-tenue);
 }
 
@@ -85,7 +85,7 @@
   background: var(--color-superficie-suave);
   color: var(--color-texto-tenue);
   font-size: 11.5px;
-  font-weight: var(--peso-fuerte);
+  font-weight: var(--peso-semi);
   white-space: nowrap;
 }
 
@@ -110,14 +110,14 @@
 
 .fuentes__total > span {
   font-size: 13.5px;
-  font-weight: var(--peso-fuerte);
+  font-weight: var(--peso-semi);
   letter-spacing: -0.2px;
 }
 
 .fuentes__nota-pie {
   margin-top: 10px;
   font-size: 11.5px;
-  font-weight: var(--peso-ligero);
+  font-weight: var(--peso-normal);
   line-height: 1.5;
   color: var(--color-texto-tenue);
 }
@@ -141,7 +141,7 @@
 }
 
 .dimensiones__fila strong {
-  font-weight: var(--peso-fuerte);
+  font-weight: var(--peso-semi);
 }
 
 /* Histórico */
@@ -166,13 +166,13 @@
 
 .historico__valor {
   font-size: 11px;
-  font-weight: var(--peso-fuerte);
+  font-weight: var(--peso-semi);
   fill: var(--color-texto);
   text-anchor: middle;
 }
 
 .historico__periodo {
-  font-size: 10.5px;
+  font-size: 11.5px;
   fill: var(--color-texto-tenue);
   text-anchor: middle;
 }
@@ -189,7 +189,7 @@
 
 .compromisos__item {
   padding: 11px 13px;
-  background: var(--color-fondo);
+  background: var(--color-superficie);
   border: 1px solid var(--color-borde-suave);
   border-left: 4px solid var(--color-amarillo-oscuro);
   border-radius: var(--radio-md);
@@ -203,7 +203,7 @@
 .compromisos__meta {
   margin-top: 7px;
   font-size: 11px;
-  font-weight: var(--peso-fuerte);
+  font-weight: var(--peso-semi);
   color: var(--color-texto-tenue);
 }
 
@@ -217,18 +217,18 @@
 
 .datos-docente__item {
   padding: 10px 12px;
-  background: var(--color-fondo);
+  background: var(--color-superficie);
   border: 1px solid var(--color-borde-suave);
   border-radius: 9px;
 }
 
 .datos-docente__item dt {
   margin-bottom: 3px;
-  font-size: 10px;
+  font-size: 11.5px;
 }
 
 .datos-docente__item dd {
   margin: 0;
   font-size: 13.5px;
-  font-weight: var(--peso-fuerte);
+  font-weight: var(--peso-semi);
 }

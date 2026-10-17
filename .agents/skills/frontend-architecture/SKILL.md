@@ -29,12 +29,15 @@ description: Define y mantiene la arquitectura del frontend React de DOCENTIA. U
 | `ponderaciones` | `/periodos-academicos/activo/ponderaciones` | lectura COORD/VICE; escritura VICERRECTOR |
 | `facultades`    | `/facultades`                       | COORDINADOR, VICERRECTOR |
 | `programas`     | `/programas`                        | COORDINADOR, VICERRECTOR |
+| `kpis`          | `/kpis`                             | COORDINADOR, VICERRECTOR |
+| `importaciones` | `/importaciones` (CSV y plantillas) | COORDINADOR; historial también VICERRECTOR |
+| `usuarios`      | `/usuarios`                         | VICERRECTOR |
 
 Cada feature: `pages/`, `components/`, `services/`, y `hooks/` solo si hace falta.
 
 ## Crear solo lo necesario
 - Las carpetas y archivos se crean cuando se implementan; no dejar archivos vacíos de "plantilla".
-- No crear `features/users`, `Register` ni `Dashboard` genérico: no corresponden a ningún endpoint.
+- No crear `features/users` (la feature es `usuarios`), `Register` ni `Dashboard` genérico.
 - `App.jsx` es un marcador mínimo: se reemplaza por `AppRouter` al implementar el login.
 
 ## Reglas

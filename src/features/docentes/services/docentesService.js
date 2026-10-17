@@ -6,6 +6,11 @@ export function listarDocentes(idFacultad) {
   return api.get(`/docentes${consulta}`)
 }
 
-export function listarFacultades() {
-  return api.get('/facultades')
+/**
+ * Docentes del alcance con el promedio del periodo activo: { periodo, docentes: [{ docente, promedio }] }.
+ * El promedio incompleto trae las fuentes que faltan; sin periodo activo, periodo y promedios van en null.
+ */
+export function listarSeguimientoDocentes(idFacultad) {
+  const consulta = idFacultad ? `?idFacultad=${encodeURIComponent(idFacultad)}` : ''
+  return api.get(`/docentes/seguimiento${consulta}`)
 }

@@ -9,3 +9,21 @@ export async function obtenerPeriodoActivo() {
     throw error
   }
 }
+
+/** Todos los periodos académicos, para elegir cuál consultar. */
+export function listarPeriodos() {
+  return api.get('/periodos-academicos')
+}
+
+/**
+ * Las cuatro etapas del periodo activo con sus fechas y si hoy están abiertas.
+ * Devuelve [] si no hay periodo activo (409).
+ */
+export async function obtenerVentanasActivas() {
+  try {
+    return await api.get('/periodos-academicos/activo/ventanas')
+  } catch (error) {
+    if (error instanceof ApiError && error.status === 409) return []
+    throw error
+  }
+}

@@ -72,9 +72,20 @@ Los componentes de expediente deben separar claramente:
   409 "No hay un periodo académico activo; la vicerrectoría debe activar uno"; `GET /periodos-academicos/activo` devuelve 404.
 - Nombre máx. 20 caracteres (ej. `2026-1`). Etapas (`TipoEtapa`), cada una a lo sumo una vez, con
   fechas dentro del periodo y cierre ≥ apertura:
-  `EVALUACION_ESTUDIANTES`, `CALIFICACION_COORDINACION`, `CALIFICACION_VICERRECTORIA`, `RETROALIMENTACION`.
-- Hoy el backend **no bloquea** calificar fuera de la etapa; la UI puede informar la etapa vigente
-  pero no inventar esa restricción como si fuera del servidor.
+  `RECOLECCION_CALIFICACIONES`, `REVISION_HALLAZGOS`, `AGENDA_CITAS`, `FIRMA_ACTAS` (los nombres
+  viejos responden 400). Una etapa sin fechas cuenta como cerrada; las fechas son inclusivas.
+- El backend **bloquea** con 409 las acciones fuera de su etapa: calificar (coordinación y
+  vicerrectoría) y cargar el CSV de estudiantes requieren `RECOLECCION_CALIFICACIONES` abierta.
+  La UI lee `GET /periodos-academicos/activo/ventanas` (en `PeriodoContext`, hook `useVentanaEtapa`)
+  para deshabilitar botones y explicar las fechas con `AvisoEtapaCerrada`; el 404 de alcance tiene
+  prioridad sobre el 409 de etapa.
+
+## Correcciones de notas (D2)
+
+- Corregir es volver a enviar la calificación de una fuente con notas distintas (o recargar el CSV).
+  `motivoCorreccion` (≤500) es opcional y solo aplica si la calificación ya existía y sus notas cambian.
+- El historial (`GET /docentes/{id}/calificaciones/correcciones`) es solo para coordinación y
+  vicerrectoría: el docente nunca lo ve (contiene notas por fuente).
 
 ## Ponderaciones
 
@@ -90,8 +101,9 @@ No hay endpoint para crearlos ni marcarlos como cumplidos.
 ## Lo que NO existe (no inventarlo)
 
 - Registro de usuarios ni recuperación de contraseña (el login por correo es temporal hasta el SSO institucional).
-- CRUD de docentes o usuarios.
-- Calificación por estudiantes desde la web.
+- Borrado o desactivación de usuarios (solo alta y edición, por vicerrectoría).
+- Formulario web para que los estudiantes califiquen: su nota llega por la carga del CSV (coordinación).
+- Mostrar los comentarios de estudiantes: se guardan al importar, pero ningún endpoint los expone aún.
 - Creación/edición de compromisos.
 
 Si una pantalla del maquetado requiere algo de esta lista, dejarla con estado "Próximamente" o

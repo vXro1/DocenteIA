@@ -39,6 +39,12 @@
   --color-borde: #e6dfce;
   --color-borde-suave: #f1ecdd;
   --color-borde-punteado: #d8d0bc;
+  /* Borde de inputs y selects: 3:1 contra el fondo para que se identifiquen como controles (WCAG 1.4.11) */
+  --color-borde-control: #8f8775;
+
+  /* Anillo de foco: azul sobre superficies claras; en la barra lateral azul se usa el amarillo */
+  --color-foco: var(--color-azul);
+  --color-foco-sobre-azul: var(--color-amarillo);
 
   /* Texto */
   --color-texto: #1e1e1e;
@@ -51,7 +57,7 @@
   --color-exito-texto: #1b5e32;
   --color-exito-fondo: #eaf6ee;
   --color-exito-borde: #bfe3cc;
-  --color-alerta-texto: #8a6f00;
+  --color-alerta-texto: #765f00;
   --color-alerta-fondo: #fbf3cc;
   --color-error: #a33116;
   --color-error-fondo: #fbede9;
@@ -63,19 +69,28 @@
   --color-nivel-aceptable: #7f9bce;
   --color-nivel-bajo: var(--color-error);
 
+  /* Gráficas: niveles de desempeño. Validados con dataviz/validate_palette.js (CVD y visión normal);
+     el amarillo tiene poco contraste con el blanco, así que siempre va con su etiqueta y su valor. */
+  --grafico-excelente: #1b7f43;
+  --grafico-bueno: #2f6fd6;
+  --grafico-aceptable: #d4a90f;
+  --grafico-bajo: #c0392b;
+
   /* Tipografía */
   --fuente-base: 'Nunito', system-ui, sans-serif;
-  --peso-ligero: 300;
+  /* El cuerpo nunca va en 300: a 12–14 px se lee débil. 900 solo para títulos y cifras grandes;
+     el texto pequeño que necesita énfasis (botones, píldoras, rótulos) usa 700. */
   --peso-normal: 400;
+  --peso-semi: 700;
   --peso-fuerte: 900;
 
   /* Radios y sombras */
   --radio-sm: 7px;
   --radio-md: 8px;
   --radio-lg: 10px;
-  --radio-xl: 12px;
+  --radio-xl: 16px;
   --radio-pildora: 20px;
-  --sombra-tarjeta: 0 1px 2px rgba(30, 30, 30, 0.04);
+  --sombra-tarjeta: 0 1px 2px rgba(30, 30, 30, 0.04), 0 12px 28px -18px rgba(5, 54, 134, 0.28);
   --sombra-boton: 0 1px 2px rgba(5, 54, 134, 0.3);
 
   /* Espaciado */

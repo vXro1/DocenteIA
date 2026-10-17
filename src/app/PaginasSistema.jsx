@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { useSesion } from '../features/auth/sesionContext.js'
 import { EstadoVista } from '../shared/components/ui/EstadoVista/EstadoVista.jsx'
+import { useTituloDocumento } from '../shared/hooks/useTituloDocumento.js'
 import { rutaInicioDelRol } from './rutasPorRol.js'
 
 function EnlaceInicio() {
@@ -9,6 +10,7 @@ function EnlaceInicio() {
 }
 
 export function PaginaSinAcceso() {
+  useTituloDocumento('Sin acceso')
   return (
     <div className="pagina">
       <EstadoVista tipo="error" titulo="Sin acceso" mensaje="Tu rol no tiene permiso para ver esta sección.">
@@ -19,6 +21,7 @@ export function PaginaSinAcceso() {
 }
 
 export function PaginaNoEncontrada() {
+  useTituloDocumento('Página no encontrada')
   return (
     <div className="pagina">
       <EstadoVista titulo="Página no encontrada" mensaje="La dirección no existe o cambió.">

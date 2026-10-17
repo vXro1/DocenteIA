@@ -35,14 +35,14 @@
 .calificar__meta {
   margin-top: 3px;
   font-size: 12.5px;
-  font-weight: var(--peso-ligero);
+  font-weight: var(--peso-normal);
   color: var(--color-texto-tenue);
 }
 
 .calificar__instruccion {
   margin: 14px 0 18px;
   font-size: 12.5px;
-  font-weight: var(--peso-ligero);
+  font-weight: var(--peso-normal);
   line-height: 1.55;
   color: var(--color-texto-secundario);
 }
@@ -58,7 +58,7 @@
   flex-direction: column;
   gap: 11px;
   padding: 13px 14px;
-  background: var(--color-fondo);
+  background: var(--color-superficie);
   border: 1px solid var(--color-borde-suave);
   border-radius: 9px;
 }
@@ -80,13 +80,13 @@
 
 .calificar__aspecto-textos label {
   font-size: 13.5px;
-  font-weight: var(--peso-fuerte);
+  font-weight: var(--peso-semi);
   letter-spacing: -0.2px;
 }
 
 .calificar__aspecto-textos span {
   font-size: 11.5px;
-  font-weight: var(--peso-ligero);
+  font-weight: var(--peso-normal);
   line-height: 1.5;
   color: var(--color-texto-tenue);
 }
@@ -97,7 +97,7 @@
   min-height: var(--alto-tactil);
   padding: 11px 12px;
   background: var(--color-superficie);
-  border: 2px solid var(--color-borde);
+  border: 2px solid var(--color-borde-control);
   border-radius: var(--radio-md);
   font-size: 16px;
   font-weight: var(--peso-fuerte);
@@ -127,11 +127,11 @@
   width: 100%;
   min-height: 78px;
   padding: 11px 13px;
-  background: var(--color-fondo);
-  border: 1px solid var(--color-borde);
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde-control);
   border-radius: 9px;
   font-size: 13px;
-  font-weight: var(--peso-ligero);
+  font-weight: var(--peso-normal);
   line-height: 1.6;
   color: var(--color-texto);
   resize: vertical;
@@ -159,10 +159,10 @@
 
 .calificar__mi-nota-rotulo {
   margin-bottom: 10px;
-  font-size: 10.5px;
+  font-size: 11.5px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  font-weight: var(--peso-fuerte);
+  font-weight: var(--peso-semi);
   opacity: 0.75;
 }
 
@@ -181,14 +181,14 @@
 
 .calificar__mi-nota-valor span {
   font-size: 15px;
-  font-weight: var(--peso-ligero);
+  font-weight: var(--peso-normal);
   opacity: 0.8;
 }
 
 .calificar__mi-nota p {
   margin-top: var(--espacio-3);
   font-size: 12.5px;
-  font-weight: var(--peso-ligero);
+  font-weight: var(--peso-normal);
   line-height: 1.55;
   opacity: 0.85;
 }
@@ -221,13 +221,13 @@
 
 .calificar__exito strong {
   font-size: 13px;
-  font-weight: var(--peso-fuerte);
+  font-weight: var(--peso-semi);
   color: var(--color-exito-texto);
 }
 
 .calificar__exito span {
   font-size: 12px;
-  font-weight: var(--peso-ligero);
+  font-weight: var(--peso-normal);
   line-height: 1.5;
   color: var(--color-exito-texto);
 }
@@ -252,4 +252,12 @@
   display: flex;
   flex-wrap: wrap;
   gap: 9px;
+}
+
+.calificar__correccion textarea {
+  min-height: 64px;
+}
+
+.calificar__lateral .aviso {
+  margin-bottom: 14px;
 }

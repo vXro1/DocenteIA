@@ -11,6 +11,11 @@
   min-width: 0;
 }
 
+/* Recibe el foco al navegar (tabIndex -1); no es un control, así que no se dibuja el anillo */
+.app-layout__principal:focus {
+  outline: none;
+}
+
 /* Contenido de cada página, debajo del encabezado */
 .pagina {
   display: flex;

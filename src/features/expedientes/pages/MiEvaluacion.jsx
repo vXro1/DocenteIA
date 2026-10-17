@@ -1,8 +1,10 @@
+import { RefreshCw } from 'lucide-react'
 import robotSaludo from '../../../assets/ilustraciones/robot-saludo.svg'
 import { Encabezado } from '../../../shared/components/layout/Encabezado/Encabezado.jsx'
 import { Boton } from '../../../shared/components/ui/Boton/Boton.jsx'
 import { Cargando, EstadoVista } from '../../../shared/components/ui/EstadoVista/EstadoVista.jsx'
 import { EtiquetaNivel } from '../../../shared/components/ui/EtiquetaNivel/EtiquetaNivel.jsx'
+import { MensajeNavegacion } from '../../../shared/components/ui/MensajeNavegacion/MensajeNavegacion.jsx'
 import { useFetch } from '../../../shared/hooks/useFetch.js'
 import { formatearNota, listarFuentes } from '../../../shared/utils/formatters.js'
 import { PanelCompromisos, PanelDimensiones } from '../components/PanelesExpediente.jsx'
@@ -42,7 +44,7 @@ export default function MiEvaluacion() {
         {encabezado}
         <div className="pagina">
           <EstadoVista tipo="error" titulo="No fue posible cargar tu evaluación" mensaje={expediente.error.message}>
-            <Boton onClick={expediente.recargar}>Intentar de nuevo</Boton>
+            <Boton icono={RefreshCw} onClick={expediente.recargar}>Intentar de nuevo</Boton>
           </EstadoVista>
         </div>
       </>
@@ -56,6 +58,7 @@ export default function MiEvaluacion() {
     <>
       {encabezado}
       <div className="pagina">
+        <MensajeNavegacion />
         {!periodo ? (
           <EstadoVista
             titulo="Aún no hay un periodo de evaluación activo"

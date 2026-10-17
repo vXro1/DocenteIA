@@ -1,12 +1,17 @@
+import { ChevronLeft, PenLine, RefreshCw } from 'lucide-react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { Encabezado } from '../../../shared/components/layout/Encabezado/Encabezado.jsx'
+import { useVentanaEtapa } from '../../../shared/components/layout/AppLayout/periodoContext.js'
+import { Aviso } from '../../../shared/components/ui/Aviso/Aviso.jsx'
 import { Boton } from '../../../shared/components/ui/Boton/Boton.jsx'
 import { Cargando, EstadoVista } from '../../../shared/components/ui/EstadoVista/EstadoVista.jsx'
 import { Panel } from '../../../shared/components/ui/Panel/Panel.jsx'
-import { FUENTE_DEL_ROL } from '../../../shared/constants/dominio.js'
+import { ETAPAS, FUENTE_DEL_ROL } from '../../../shared/constants/dominio.js'
 import { useFetch } from '../../../shared/hooks/useFetch.js'
 import { iniciales } from '../../../shared/utils/formatters.js'
 import { useSesion } from '../../auth/sesionContext.js'
+import { PanelCorrecciones } from '../../calificaciones/components/PanelCorrecciones.jsx'
+import { AvisoEtapaCerrada } from '../../periodos/components/AvisoEtapaCerrada.jsx'
 import {
   DatosDocente,
   PanelCompromisos,
@@ -21,6 +26,7 @@ export default function ExpedienteDocente() {
   const { idDocente } = useParams()
   const { usuario } = useSesion()
   const navegar = useNavigate()
+  const recoleccion = useVentanaEtapa(ETAPAS.RECOLECCION_CALIFICACIONES)
   const expediente = useFetch(() => obtenerExpedienteDocente(idDocente), [idDocente])
 
   const encabezado = (
@@ -56,7 +62,7 @@ export default function ExpedienteDocente() {
             {noEncontrado ? (
               <Link to="/docentes">Volver al listado</Link>
             ) : (
-              <Boton onClick={expediente.recargar}>Intentar de nuevo</Boton>
+              <Boton icono={RefreshCw} onClick={expediente.recargar}>Intentar de nuevo</Boton>
             )}
           </EstadoVista>
         </div>
@@ -74,14 +80,14 @@ export default function ExpedienteDocente() {
       {encabezado}
       <div className="pagina">
         <Link to="/docentes" className="enlace-volver">
-          ‹ Volver al listado
+          <ChevronLeft size={16} aria-hidden="true" />
+          Volver al listado
         </Link>
 
         {!periodo && (
-          <div className="expediente__aviso" role="status">
-            No hay un periodo académico activo. La vicerrectoría debe activar uno para registrar
-            calificaciones.
-          </div>
+          <Aviso tipo="alerta" titulo="No hay un periodo académico activo">
+            La vicerrectoría debe activar uno para registrar calificaciones.
+          </Aviso>
         )}
 
         <div className="rejilla">
@@ -106,11 +112,15 @@ export default function ExpedienteDocente() {
             <Boton
               bloque
               className="expediente__calificar"
-              disabled={!periodo}
+              icono={PenLine}
+              disabled={!periodo || Boolean(recoleccion && !recoleccion.abierta)}
               onClick={() => navegar(`/docentes/${docente.idDocente}/calificar`)}
             >
               {yaCalifique ? 'Editar mi calificación' : 'Registrar mi calificación'}
             </Boton>
+            <div className="expediente__etapa">
+              <AvisoEtapaCerrada ventana={recoleccion} accion="Calificar" />
+            </div>
           </PanelFuentes>
 
           <PanelDimensiones dimensiones={dimensiones} />
@@ -120,6 +130,8 @@ export default function ExpedienteDocente() {
           <PanelHistorico historico={historico} />
           <PanelCompromisos compromisos={compromisosVigentes} />
         </div>
+
+        <PanelCorrecciones idDocente={docente.idDocente} />
       </div>
     </>
   )
