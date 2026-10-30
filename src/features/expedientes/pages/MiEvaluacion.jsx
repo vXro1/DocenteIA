@@ -1,10 +1,11 @@
-import { RefreshCw } from 'lucide-react'
+import { MessagesSquare, RefreshCw } from 'lucide-react'
 import robotSaludo from '../../../assets/ilustraciones/robot-saludo.svg'
 import { Encabezado } from '../../../shared/components/layout/Encabezado/Encabezado.jsx'
 import { Boton } from '../../../shared/components/ui/Boton/Boton.jsx'
 import { Cargando, EstadoVista } from '../../../shared/components/ui/EstadoVista/EstadoVista.jsx'
 import { EtiquetaNivel } from '../../../shared/components/ui/EtiquetaNivel/EtiquetaNivel.jsx'
 import { MensajeNavegacion } from '../../../shared/components/ui/MensajeNavegacion/MensajeNavegacion.jsx'
+import { Panel } from '../../../shared/components/ui/Panel/Panel.jsx'
 import { useFetch } from '../../../shared/hooks/useFetch.js'
 import { formatearNota, listarFuentes } from '../../../shared/utils/formatters.js'
 import { PanelCompromisos, PanelDimensiones } from '../components/PanelesExpediente.jsx'
@@ -98,6 +99,12 @@ export default function MiEvaluacion() {
 
             <PanelDimensiones titulo="Mis dimensiones" dimensiones={dimensiones} />
             <PanelCompromisos titulo="Mis compromisos" compromisos={compromisosVigentes} />
+            <Panel titulo="Lo que dicen tus estudiantes" icono={MessagesSquare}>
+              <p>
+                La coordinación revisa los comentarios de tus estudiantes. Verás las fortalezas y
+                oportunidades de mejora cuando las valide.
+              </p>
+            </Panel>
           </div>
         )}
       </div>

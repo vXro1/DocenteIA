@@ -4,6 +4,8 @@ import Login from '../features/auth/pages/Login.jsx'
 import { SesionProvider } from '../features/auth/SesionProvider.jsx'
 import { useSesion } from '../features/auth/sesionContext.js'
 import CalificarDocente from '../features/calificaciones/pages/CalificarDocente.jsx'
+import Agenda from '../features/agenda/pages/Agenda.jsx'
+import MiCita from '../features/agenda/pages/MiCita.jsx'
 import Analisis from '../features/analisis/pages/Analisis.jsx'
 import Docentes from '../features/docentes/pages/Docentes.jsx'
 import ExpedienteDocente from '../features/expedientes/pages/ExpedienteDocente.jsx'
@@ -45,6 +47,7 @@ export function AppRouter() {
             <Route element={<AppLayout />}>
               <Route element={<ProtectedRoute rolesPermitidos={[ROLES.DOCENTE]} />}>
                 <Route path="/mi-evaluacion" element={<MiEvaluacion />} />
+                <Route path="/mi-cita" element={<MiCita />} />
               </Route>
 
               <Route element={<ProtectedRoute rolesPermitidos={GESTION} />}>
@@ -54,6 +57,10 @@ export function AppRouter() {
                 <Route path="/docentes" element={<Docentes />} />
                 <Route path="/docentes/:idDocente" element={<ExpedienteDocente />} />
                 <Route path="/docentes/:idDocente/calificar" element={<CalificarDocente />} />
+              </Route>
+
+              <Route element={<ProtectedRoute rolesPermitidos={[ROLES.COORDINADOR]} />}>
+                <Route path="/agenda" element={<Agenda />} />
               </Route>
 
               <Route element={<ProtectedRoute rolesPermitidos={[ROLES.VICERRECTOR]} />}>
