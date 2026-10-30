@@ -7,8 +7,12 @@ import CalificarDocente from '../features/calificaciones/pages/CalificarDocente.
 import Docentes from '../features/docentes/pages/Docentes.jsx'
 import ExpedienteDocente from '../features/expedientes/pages/ExpedienteDocente.jsx'
 import MiEvaluacion from '../features/expedientes/pages/MiEvaluacion.jsx'
+import Facultades from '../features/facultades/pages/Facultades.jsx'
 import Importaciones from '../features/importaciones/pages/Importaciones.jsx'
 import Inicio from '../features/kpis/pages/Inicio.jsx'
+import Periodos from '../features/periodos/pages/Periodos.jsx'
+import Ponderaciones from '../features/ponderaciones/pages/Ponderaciones.jsx'
+import Programas from '../features/programas/pages/Programas.jsx'
 import FormularioUsuario from '../features/usuarios/pages/FormularioUsuario.jsx'
 import Usuarios from '../features/usuarios/pages/Usuarios.jsx'
 import { AppLayout } from '../shared/components/layout/AppLayout/AppLayout.jsx'
@@ -51,6 +55,10 @@ export function AppRouter() {
               </Route>
 
               <Route element={<ProtectedRoute rolesPermitidos={[ROLES.VICERRECTOR]} />}>
+                <Route path="/periodos" element={<Periodos />} />
+                <Route path="/ponderaciones" element={<Ponderaciones />} />
+                <Route path="/facultades" element={<Facultades />} />
+                <Route path="/programas" element={<Programas />} />
                 {/* Crear y editar se abren como modal sobre la lista */}
                 <Route path="/usuarios" element={<Usuarios />}>
                   <Route path="nuevo" element={<FormularioUsuario />} />

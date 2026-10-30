@@ -1,4 +1,19 @@
-import { ClipboardCheck, FileUp, GraduationCap, KeyRound, LayoutDashboard, LogOut, UserCog, Users } from 'lucide-react'
+import {
+  BookOpen,
+  Building2,
+  CalendarDays,
+  CalendarRange,
+  ClipboardCheck,
+  FileUp,
+  GraduationCap,
+  KeyRound,
+  LayoutDashboard,
+  LogOut,
+  MessagesSquare,
+  Scale,
+  UserCog,
+  Users,
+} from 'lucide-react'
 import { useEffect, useRef } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import { RUTA_CAMBIO_CONTRASENA } from '../../../../app/rutasPorRol.js'
@@ -8,16 +23,26 @@ import { iniciales } from '../../../utils/formatters.js'
 import './Sidebar.css'
 
 const NAVEGACION = {
-  [ROLES.DOCENTE]: [{ ruta: '/mi-evaluacion', etiqueta: 'Mi evaluación', Icono: ClipboardCheck }],
+  [ROLES.DOCENTE]: [
+    { ruta: '/mi-evaluacion', etiqueta: 'Mi evaluación', Icono: ClipboardCheck },
+    { ruta: '/mi-cita', etiqueta: 'Mi cita', Icono: CalendarDays },
+  ],
   [ROLES.COORDINADOR]: [
     { ruta: '/inicio', etiqueta: 'Inicio', Icono: LayoutDashboard },
     { ruta: '/docentes', etiqueta: 'Docentes', Icono: Users },
     { ruta: '/importaciones', etiqueta: 'Evaluación de estudiantes', Icono: FileUp },
+    { ruta: '/analisis', etiqueta: 'Análisis de comentarios', Icono: MessagesSquare },
+    { ruta: '/agenda', etiqueta: 'Agenda de citas', Icono: CalendarDays },
   ],
   [ROLES.VICERRECTOR]: [
     { ruta: '/inicio', etiqueta: 'Inicio', Icono: LayoutDashboard },
     { ruta: '/docentes', etiqueta: 'Docentes', Icono: Users },
     { ruta: '/importaciones', etiqueta: 'Cargas de estudiantes', Icono: FileUp },
+    { ruta: '/analisis', etiqueta: 'Análisis de comentarios', Icono: MessagesSquare },
+    { ruta: '/periodos', etiqueta: 'Periodos', Icono: CalendarRange },
+    { ruta: '/ponderaciones', etiqueta: 'Ponderaciones', Icono: Scale },
+    { ruta: '/facultades', etiqueta: 'Facultades', Icono: Building2 },
+    { ruta: '/programas', etiqueta: 'Programas', Icono: BookOpen },
     { ruta: '/usuarios', etiqueta: 'Usuarios', Icono: UserCog },
   ],
 }
