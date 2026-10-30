@@ -17,7 +17,6 @@ npm-debug.log*
 .idea/
 .vscode/*
 !.vscode/extensions.json
-.claude/
 .DS_Store
 Thumbs.db
 *.suo
