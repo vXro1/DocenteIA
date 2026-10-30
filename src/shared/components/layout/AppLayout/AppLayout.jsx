@@ -16,9 +16,19 @@ const cargarVentanas = () => obtenerVentanasActivas().catch(() => null)
 export function AppLayout() {
   const periodo = useFetch(obtenerPeriodoActivo)
   const ventanas = useFetch(cargarVentanas)
+  const { recargar: recargarPeriodo } = periodo
+  const { recargar: recargarVentanas } = ventanas
   const valor = useMemo(
-    () => ({ periodo: periodo.datos, ventanas: ventanas.datos, cargando: periodo.cargando }),
-    [periodo.datos, ventanas.datos, periodo.cargando],
+    () => ({
+      periodo: periodo.datos,
+      ventanas: ventanas.datos,
+      cargando: periodo.cargando,
+      recargar: () => {
+        recargarPeriodo()
+        recargarVentanas()
+      },
+    }),
+    [periodo.datos, ventanas.datos, periodo.cargando, recargarPeriodo, recargarVentanas],
   )
 
   // Al navegar, el foco pasa al contenido nuevo para que teclado y lectores de pantalla no se queden

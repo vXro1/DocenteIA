@@ -301,3 +301,22 @@ textarea.campo__control {
   background: var(--color-borde-suave);
   color: var(--color-texto-apagado);
 }
+
+/* Formularios cortos en línea y acciones de una fila */
+.formulario-simple {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px;
+}
+.formulario-simple .campo {
+  flex: 1 1 200px;
+}
+.formulario-simple .aviso {
+  flex-basis: 100%;
+}
+.acciones-fila {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
