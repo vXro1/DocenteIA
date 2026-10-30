@@ -19,7 +19,22 @@ npm run dev        # http://localhost:5173
 ```
 
 En desarrollo las peticiones a `/api` se reenvían al backend con el proxy de Vite
-(`vite.config.js`), porque la API no tiene CORS configurado.
+(`vite.config.js`). Si el backend corre en otro puerto:
+
+```bash
+DOCENTIA_API_URL=http://localhost:8081 npm run dev            # Linux, macOS, Git Bash
+$env:DOCENTIA_API_URL="http://localhost:8081"; npm run dev    # Windows PowerShell
+```
+
+## Pantallas por rol
+
+| Rol           | Pantallas |
+| ------------- | --------- |
+| Coordinación  | Inicio, Docentes, Expediente, Calificar, Evaluación de estudiantes, Análisis de comentarios, Agenda de citas |
+| Vicerrectoría | Inicio, Docentes, Expediente, Calificar, Cargas de estudiantes, Análisis (consulta), Periodos, Ponderaciones, Facultades, Programas, Usuarios |
+| Docente       | Mi evaluación, Mi cita |
+
+El recorrido de demo está en [docs/checklist-demo-sprint3.md](docs/checklist-demo-sprint3.md).
 
 Los usuarios de prueba son los del perfil `dev` del backend.
 
@@ -28,14 +43,14 @@ Los usuarios de prueba son los del perfil `dev` del backend.
 ```bash
 npm run lint
 npm run build
+npm test
 ```
 
 ## Estructura
 
 ```
 design/            maquetado exportado (referencia, no se empaqueta)
-.agents/skills/    instrucciones para asistentes de IA (dominio, API, roles, maquetado…)
-.ai/               contexto del proyecto para asistentes de IA
+docs/              checklist de la demo
 src/
   app/             router y rutas protegidas
   features/        una carpeta por área del negocio (auth, docentes, expedientes…)

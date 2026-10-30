@@ -320,3 +320,9 @@ textarea.campo__control {
   flex-wrap: wrap;
   gap: 6px;
 }
+
+/* Pantalla pequeña: los textos ocultos no se salen del recuadro con desplazamiento */
+.tabla-contenedor,
+.docentes__desplazable {
+  position: relative;
+}
