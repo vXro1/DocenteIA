@@ -33,7 +33,7 @@ npm run build
 ## Estructura
 
 ```
-design/            maquetado exportado de Claude Design (referencia, no se empaqueta)
+design/            maquetado exportado (referencia, no se empaqueta)
 .agents/skills/    instrucciones para asistentes de IA (dominio, API, roles, maquetado…)
 .ai/               contexto del proyecto para asistentes de IA
 src/
