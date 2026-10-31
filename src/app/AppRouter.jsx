@@ -1,8 +1,14 @@
+import { GoogleOAuthProvider } from '@react-oauth/google'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import CambiarContrasena from '../features/auth/pages/CambiarContrasena.jsx'
 import Login from '../features/auth/pages/Login.jsx'
 import { SesionProvider } from '../features/auth/SesionProvider.jsx'
 import { useSesion } from '../features/auth/sesionContext.js'
+import AccionesSugeridas from '../features/actas/pages/AccionesSugeridas.jsx'
+import VerificarActa from '../features/actas/pages/VerificarActa.jsx'
+import MiActa from '../features/actas/pages/MiActa.jsx'
+import MiAutoevaluacion from '../features/calificaciones/pages/MiAutoevaluacion.jsx'
+import PanelProgramas from '../features/kpis/pages/PanelProgramas.jsx'
 import CalificarDocente from '../features/calificaciones/pages/CalificarDocente.jsx'
 import Agenda from '../features/agenda/pages/Agenda.jsx'
 import MiCita from '../features/agenda/pages/MiCita.jsx'
@@ -26,19 +32,22 @@ import { RUTA_CAMBIO_CONTRASENA, rutaInicioDelRol } from './rutasPorRol.js'
 
 const GESTION = [ROLES.COORDINADOR, ROLES.VICERRECTOR]
 
+const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID?.trim() ?? ''
+
 function RedirigirAlInicio() {
   const { usuario, validando } = useSesion()
   if (validando) return null
   return <Navigate to={usuario ? rutaInicioDelRol(usuario.rol) : '/login'} replace />
 }
 
-export function AppRouter() {
+function RutasDocentia() {
   return (
     <BrowserRouter>
       <SesionProvider>
         <Routes>
           <Route path="/" element={<RedirigirAlInicio />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/verificar-acta/:codigo" element={<VerificarActa />} />
 
           <Route element={<ProtectedRoute />}>
             {/* Fuera del layout: con la contraseña temporal el resto de la API responde 403. */}
@@ -48,6 +57,8 @@ export function AppRouter() {
               <Route element={<ProtectedRoute rolesPermitidos={[ROLES.DOCENTE]} />}>
                 <Route path="/mi-evaluacion" element={<MiEvaluacion />} />
                 <Route path="/mi-cita" element={<MiCita />} />
+                <Route path="/mi-autoevaluacion" element={<MiAutoevaluacion />} />
+                <Route path="/mi-acta" element={<MiActa />} />
               </Route>
 
               <Route element={<ProtectedRoute rolesPermitidos={GESTION} />}>
@@ -56,11 +67,13 @@ export function AppRouter() {
                 <Route path="/analisis" element={<Analisis />} />
                 <Route path="/docentes" element={<Docentes />} />
                 <Route path="/docentes/:idDocente" element={<ExpedienteDocente />} />
-                <Route path="/docentes/:idDocente/calificar" element={<CalificarDocente />} />
+                <Route path="/acciones-sugeridas" element={<AccionesSugeridas />} />
+                <Route path="/panel-programas" element={<PanelProgramas />} />
               </Route>
 
               <Route element={<ProtectedRoute rolesPermitidos={[ROLES.COORDINADOR]} />}>
                 <Route path="/agenda" element={<Agenda />} />
+                <Route path="/docentes/:idDocente/calificar" element={<CalificarDocente />} />
               </Route>
 
               <Route element={<ProtectedRoute rolesPermitidos={[ROLES.VICERRECTOR]} />}>
@@ -82,4 +95,15 @@ export function AppRouter() {
       </SesionProvider>
     </BrowserRouter>
   )
+}
+
+export function AppRouter() {
+  if (googleClientId) {
+    return (
+      <GoogleOAuthProvider clientId={googleClientId}>
+        <RutasDocentia />
+      </GoogleOAuthProvider>
+    )
+  }
+  return <RutasDocentia />
 }
