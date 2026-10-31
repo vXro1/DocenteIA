@@ -8,6 +8,7 @@ import AccionesSugeridas from '../features/actas/pages/AccionesSugeridas.jsx'
 import VerificarActa from '../features/actas/pages/VerificarActa.jsx'
 import MiActa from '../features/actas/pages/MiActa.jsx'
 import MiAutoevaluacion from '../features/calificaciones/pages/MiAutoevaluacion.jsx'
+import Auditoria from '../features/auditoria/pages/Auditoria.jsx'
 import Notificaciones from '../features/notificaciones/pages/Notificaciones.jsx'
 import PanelProgramas from '../features/kpis/pages/PanelProgramas.jsx'
 import CalificarDocente from '../features/calificaciones/pages/CalificarDocente.jsx'
@@ -80,6 +81,7 @@ function RutasDocentia() {
 
               <Route element={<ProtectedRoute rolesPermitidos={[ROLES.VICERRECTOR]} />}>
                 <Route path="/periodos" element={<Periodos />} />
+                <Route path="/auditoria" element={<Auditoria />} />
                 <Route path="/ponderaciones" element={<Ponderaciones />} />
                 <Route path="/facultades" element={<Facultades />} />
                 <Route path="/programas" element={<Programas />} />
