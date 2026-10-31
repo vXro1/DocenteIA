@@ -1,11 +1,11 @@
 import { api, ApiError } from '../../../services/api.js'
 
-/** Devuelve el periodo activo, o null si la vicerrectoría no ha activado ninguno (404). */
+/** Devuelve el periodo activo, o null si la vicerrectoría no ha activado ninguno. */
 export async function obtenerPeriodoActivo() {
   try {
     return await api.get('/periodos-academicos/activo')
   } catch (error) {
-    if (error instanceof ApiError && error.status === 404) return null
+    if (error instanceof ApiError && (error.status === 404 || error.status === 409)) return null
     throw error
   }
 }
@@ -26,4 +26,31 @@ export async function obtenerVentanasActivas() {
     if (error instanceof ApiError && error.status === 409) return []
     throw error
   }
+}
+
+/** Etapa vigente y línea de tiempo del periodo activo; null si no hay uno (409). */
+export async function obtenerCalendario() {
+  try {
+    return await api.get('/periodos-academicos/activo/calendario')
+  } catch (error) {
+    if (error instanceof ApiError && error.status === 409) return null
+    throw error
+  }
+}
+
+export function crearPeriodo(periodo) {
+  return api.post('/periodos-academicos', periodo)
+}
+
+export function actualizarPeriodo(idPeriodo, periodo) {
+  return api.put(`/periodos-academicos/${encodeURIComponent(idPeriodo)}`, periodo)
+}
+
+/** Solo hay un periodo activo: activar uno desactiva el anterior. */
+export function activarPeriodo(idPeriodo) {
+  return api.put(`/periodos-academicos/${encodeURIComponent(idPeriodo)}/activacion`)
+}
+
+export function desactivarPeriodo(idPeriodo) {
+  return api.delete(`/periodos-academicos/${encodeURIComponent(idPeriodo)}/activacion`)
 }

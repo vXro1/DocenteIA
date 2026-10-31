@@ -1,4 +1,23 @@
-import { ClipboardCheck, FileUp, GraduationCap, KeyRound, LayoutDashboard, LogOut, UserCog, Users } from 'lucide-react'
+import {
+  BookOpen,
+  Building2,
+  CalendarDays,
+  CalendarRange,
+  ChartColumn,
+  ClipboardCheck,
+  FileSignature,
+  FileUp,
+  GraduationCap,
+  KeyRound,
+  LayoutDashboard,
+  Lightbulb,
+  LogOut,
+  MessagesSquare,
+  PenLine,
+  Scale,
+  UserCog,
+  Users,
+} from 'lucide-react'
 import { useEffect, useRef } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import { RUTA_CAMBIO_CONTRASENA } from '../../../../app/rutasPorRol.js'
@@ -8,16 +27,32 @@ import { iniciales } from '../../../utils/formatters.js'
 import './Sidebar.css'
 
 const NAVEGACION = {
-  [ROLES.DOCENTE]: [{ ruta: '/mi-evaluacion', etiqueta: 'Mi evaluación', Icono: ClipboardCheck }],
+  [ROLES.DOCENTE]: [
+    { ruta: '/mi-evaluacion', etiqueta: 'Mi evaluación', Icono: ClipboardCheck },
+    { ruta: '/mi-autoevaluacion', etiqueta: 'Mi autoevaluación', Icono: PenLine },
+    { ruta: '/mi-cita', etiqueta: 'Mi cita', Icono: CalendarDays },
+    { ruta: '/mi-acta', etiqueta: 'Mi acta', Icono: FileSignature },
+  ],
   [ROLES.COORDINADOR]: [
     { ruta: '/inicio', etiqueta: 'Inicio', Icono: LayoutDashboard },
     { ruta: '/docentes', etiqueta: 'Docentes', Icono: Users },
     { ruta: '/importaciones', etiqueta: 'Evaluación de estudiantes', Icono: FileUp },
+    { ruta: '/analisis', etiqueta: 'Análisis de comentarios', Icono: MessagesSquare },
+    { ruta: '/agenda', etiqueta: 'Agenda de citas', Icono: CalendarDays },
+    { ruta: '/acciones-sugeridas', etiqueta: 'Acciones sugeridas', Icono: Lightbulb },
+    { ruta: '/panel-programas', etiqueta: 'Panel por programa', Icono: ChartColumn },
   ],
   [ROLES.VICERRECTOR]: [
     { ruta: '/inicio', etiqueta: 'Inicio', Icono: LayoutDashboard },
     { ruta: '/docentes', etiqueta: 'Docentes', Icono: Users },
     { ruta: '/importaciones', etiqueta: 'Cargas de estudiantes', Icono: FileUp },
+    { ruta: '/analisis', etiqueta: 'Análisis de comentarios', Icono: MessagesSquare },
+    { ruta: '/acciones-sugeridas', etiqueta: 'Acciones sugeridas', Icono: Lightbulb },
+    { ruta: '/panel-programas', etiqueta: 'Panel por programa', Icono: ChartColumn },
+    { ruta: '/periodos', etiqueta: 'Periodos', Icono: CalendarRange },
+    { ruta: '/ponderaciones', etiqueta: 'Ponderaciones', Icono: Scale },
+    { ruta: '/facultades', etiqueta: 'Facultades', Icono: Building2 },
+    { ruta: '/programas', etiqueta: 'Programas', Icono: BookOpen },
     { ruta: '/usuarios', etiqueta: 'Usuarios', Icono: UserCog },
   ],
 }
