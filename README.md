@@ -38,6 +38,11 @@ El recorrido de demo está en [docs/checklist-demo-sprint3.md](docs/checklist-de
 
 Los usuarios de prueba son los del perfil `dev` del backend.
 
+Además, según la Resolución 074: el docente registra su autoevaluación, firma su acta y ve el
+seguimiento de su plan; coordinación genera y firma actas, revisa hallazgos y consulta acciones
+sugeridas y panel por programa; vicerrectoría consulta lo mismo y corrige actas firmadas. La página
+`/verificar-acta/:codigo` es pública.
+
 ## Comprobaciones
 
 ```bash
