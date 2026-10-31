@@ -8,6 +8,7 @@ import AccionesSugeridas from '../features/actas/pages/AccionesSugeridas.jsx'
 import VerificarActa from '../features/actas/pages/VerificarActa.jsx'
 import MiActa from '../features/actas/pages/MiActa.jsx'
 import MiAutoevaluacion from '../features/calificaciones/pages/MiAutoevaluacion.jsx'
+import Notificaciones from '../features/notificaciones/pages/Notificaciones.jsx'
 import PanelProgramas from '../features/kpis/pages/PanelProgramas.jsx'
 import CalificarDocente from '../features/calificaciones/pages/CalificarDocente.jsx'
 import Agenda from '../features/agenda/pages/Agenda.jsx'
@@ -54,6 +55,7 @@ function RutasDocentia() {
             <Route path={RUTA_CAMBIO_CONTRASENA} element={<CambiarContrasena />} />
 
             <Route element={<AppLayout />}>
+              <Route path="/notificaciones" element={<Notificaciones />} />
               <Route element={<ProtectedRoute rolesPermitidos={[ROLES.DOCENTE]} />}>
                 <Route path="/mi-evaluacion" element={<MiEvaluacion />} />
                 <Route path="/mi-cita" element={<MiCita />} />
