@@ -46,7 +46,7 @@ export default function Presentacion() {
         </Link>
         <img
           className="presentacion__logo-institucional"
-          src="/brand/logo-uniautonoma.png"
+          src={`${import.meta.env.BASE_URL}brand/logo-uniautonoma.png`}
           alt="Universidad Autónoma del Cauca"
         />
         <Link to="/login" className="presentacion__boton presentacion__boton--claro">
@@ -80,7 +80,7 @@ export default function Presentacion() {
             <p className="presentacion__visual-rotulo">Un proceso conectado</p>
             <ol className="presentacion__ruta">
               {[
-                ['01', 'Evaluar', 'Tres fuentes, un mismo periodo'],
+                ['01', 'Evaluar', 'Tres evaluadores, un mismo periodo'],
                 ['02', 'Analizar', 'Resultados y comentarios'],
                 ['03', 'Retroalimentar', 'Reunión, acta y seguimiento'],
               ].map(([numero, titulo, texto]) => (
