@@ -57,7 +57,8 @@ export default function Inicio() {
 
   // El análisis del periodo activo lo comparten el asistente y los paneles de seguimiento.
   const miFuente = FUENTE_DEL_ROL[usuario.rol]
-  const agrupacion = esVicerrector ? 'facultad' : 'programa'
+  // Los paneles hablan de programas para todos los roles; el filtro de facultad solo acota.
+  const agrupacion = 'programa'
   const analisis = useMemo(
     () =>
       seguimiento.datos?.periodo && configuracion.datos
@@ -84,7 +85,7 @@ export default function Inicio() {
         }
       />
 
-      <div className="pagina">
+      <div className="pagina inicio">
         <MensajeNavegacion />
         <section className="inicio__filtros" aria-label="Filtros del resumen">
           <div className="inicio__campos">
@@ -156,6 +157,9 @@ export default function Inicio() {
           <span> · {nombreFacultad}</span>
         </h2>
         <Indicadores kpis={kpis} esVicerrector={esVicerrector} mostrarCompletos={!viendoActivo} />
+        {esVicerrector && viendoActivo && (
+          <ListaDestacados seguimiento={seguimiento} umbral={kpis.datos?.umbralDestacado} />
+        )}
 
         <h2 className="inicio__seccion">
           Seguimiento del periodo activo{seguimiento.datos?.periodo ? ` (${seguimiento.datos.periodo.nombre})` : ''}
@@ -224,7 +228,7 @@ function Indicadores({ kpis, esVicerrector, mostrarCompletos }) {
     return (
       <EstadoVista
         titulo="Aún no hay calificaciones en este periodo"
-        mensaje="Cuando coordinación, vicerrectoría o la carga del CSV de estudiantes registren calificaciones, los indicadores aparecerán aquí."
+        mensaje="Cuando se envíen los formularios de evaluación, los indicadores aparecerán aquí."
       />
     )
   }
@@ -320,5 +324,46 @@ function Seguimiento({ seguimiento, configuracion, analisis, agrupacion, miFuent
         <ArrowRight size={18} aria-hidden="true" />
       </Link>
     </>
+  )
+}
+
+/** Docentes con promedio completo igual o mayor al umbral de destacado, de mayor a menor. */
+export function ListaDestacados({ seguimiento, umbral }) {
+  if (umbral == null || !seguimiento.datos) return null
+  const destacados = seguimiento.datos.docentes
+    .filter((d) => d.promedio?.estado === 'COMPLETO' && Number(d.promedio.valor) >= Number(umbral))
+    .sort((a, b) => Number(b.promedio.valor) - Number(a.promedio.valor))
+  return (
+    <section className="inicio__destacados panel" aria-labelledby="titulo-destacados">
+      <h3 id="titulo-destacados" className="inicio__destacados-titulo">
+        Docentes destacados <span>· promedio de {formatearNota(umbral)} o más</span>
+      </h3>
+      {destacados.length === 0 ? (
+        <p className="campo__ayuda">Ningún docente con promedio completo alcanza el umbral todavía.</p>
+      ) : (
+        <table className="tabla">
+          <thead>
+            <tr>
+              <th scope="col">Docente</th>
+              <th scope="col">Programa</th>
+              <th scope="col">Puntaje</th>
+              <th scope="col">Clasificación</th>
+            </tr>
+          </thead>
+          <tbody>
+            {destacados.map((d) => (
+              <tr key={d.docente.idDocente}>
+                <td className="tabla__fuerte">
+                  <Link to={`/docentes/${d.docente.idDocente}`}>{d.docente.nombreCompleto}</Link>
+                </td>
+                <td data-etiqueta="Programa">{d.docente.nombrePrograma}</td>
+                <td data-etiqueta="Puntaje">{formatearNota(d.promedio.valor)}</td>
+                <td data-etiqueta="Clasificación">{d.promedio.categoria?.etiqueta ?? '—'}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+    </section>
   )
 }

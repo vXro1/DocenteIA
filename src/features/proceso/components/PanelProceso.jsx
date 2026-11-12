@@ -1,5 +1,5 @@
 import { RefreshCw, Route } from 'lucide-react'
-import { useCallback } from 'react'
+import { useCallback, useEffect } from 'react'
 import { Boton } from '../../../shared/components/ui/Boton/Boton.jsx'
 import { Cargando, EstadoVista } from '../../../shared/components/ui/EstadoVista/EstadoVista.jsx'
 import { Panel } from '../../../shared/components/ui/Panel/Panel.jsx'
@@ -41,10 +41,14 @@ function describirActa(acta) {
  * Estado general del proceso de un docente para coordinación y vicerrectoría: evaluaciones, cita,
  * asistencia y acta, con la trazabilidad de cada paso. La coordinación registra aquí la asistencia.
  */
-export function PanelProceso({ idDocente, onCambio }) {
+export function PanelProceso({ idDocente, onCambio, onDatos }) {
   const { usuario } = useSesion()
   const cargar = useCallback(() => obtenerProceso(idDocente), [idDocente])
   const proceso = useFetch(cargar, [cargar])
+
+  useEffect(() => {
+    if (proceso.datos) onDatos?.(proceso.datos)
+  }, [onDatos, proceso.datos])
 
   if (proceso.cargando && !proceso.datos) {
     return (

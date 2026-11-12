@@ -1,7 +1,7 @@
 import { ArrowRight, CircleAlert, Eye, EyeOff, Info, Lock, Mail } from 'lucide-react'
 import { GoogleLogin } from '@react-oauth/google'
 import { useRef, useState } from 'react'
-import { Navigate, useLocation } from 'react-router-dom'
+import { Link, Navigate, useLocation } from 'react-router-dom'
 import robotError from '../../../assets/ilustraciones/robot-error.svg'
 import robotPensando from '../../../assets/ilustraciones/robot-pensando.svg'
 import robotSaludo from '../../../assets/ilustraciones/robot-saludo.svg'
@@ -129,7 +129,7 @@ export default function Login() {
         {motivoCierre === MOTIVO_CIERRE.EXPIRADA && !errorGeneral && (
           <div className="login__aviso login__aviso--info" role="status">
             <Info size={18} aria-hidden="true" />
-            <span>Tu sesión expiró por seguridad. Vuelve a ingresar para continuar donde ibas.</span>
+            <span>Tu sesión venció. Vuelve a ingresar para continuar donde ibas.</span>
           </div>
         )}
 
@@ -189,7 +189,7 @@ export default function Login() {
               className="login__ver"
               onClick={() => setVerContrasena((v) => !v)}
               aria-pressed={verContrasena}
-              aria-label="Mostrar contraseña"
+              aria-label={verContrasena ? 'Ocultar contraseña' : 'Mostrar contraseña'}
               aria-controls="contrasena"
             >
               {verContrasena ? <EyeOff size={18} aria-hidden="true" /> : <Eye size={18} aria-hidden="true" />}
@@ -211,6 +211,9 @@ export default function Login() {
           {enviando ? 'Ingresando…' : 'Ingresar'}
           {!enviando && <ArrowRight size={18} strokeWidth={2.25} aria-hidden="true" className="login__flecha" />}
         </Boton>
+        <Link to="/recuperar-contrasena" className="login__olvide">
+          ¿Olvidaste tu contraseña?
+        </Link>
 
         {googleClientId && (
           <>
@@ -232,9 +235,6 @@ export default function Login() {
           </>
         )}
 
-        <p className="login__olvido">
-          <strong>¿Olvidaste tu contraseña?</strong> Pide una nueva a la Vicerrectoría académica.
-        </p>
       </form>
     </PantallaAcceso>
   )

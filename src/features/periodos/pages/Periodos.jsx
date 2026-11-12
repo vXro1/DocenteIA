@@ -8,10 +8,13 @@ import { Campo } from '../../../shared/components/ui/Campo/Campo.jsx'
 import { ErrorApi } from '../../../shared/components/ui/ErrorApi/ErrorApi.jsx'
 import { Cargando, EstadoVista } from '../../../shared/components/ui/EstadoVista/EstadoVista.jsx'
 import { Panel } from '../../../shared/components/ui/Panel/Panel.jsx'
+import { Paginacion } from '../../../shared/components/ui/Paginacion/Paginacion.jsx'
 import { useFetch } from '../../../shared/hooks/useFetch.js'
+import { usePaginacion } from '../../../shared/hooks/usePaginacion.js'
 import { formatearFecha } from '../../../shared/utils/formatters.js'
 import { ApiError } from '../../../services/api.js'
-import { ETAPAS_PERIODO, validarFechasPeriodo } from '../etapas.js'
+import { ETAPAS_PERIODO, nombrePeriodoDesde, nombrePeriodoValido, validarFechasPeriodo } from '../etapas.js'
+import { useSesion } from '../../auth/sesionContext.js'
 import {
   activarPeriodo,
   actualizarPeriodo,
@@ -36,9 +39,12 @@ function fechasDe(periodo) {
   )
 }
 
-export function FormularioPeriodo({ guardado, onGuardar, onCancelar }) {
-  const [nombre, setNombre] = useState(guardado?.nombre ?? '')
+export function FormularioPeriodo({ guardado, onGuardar, onCancelar, puedeAjustarNombre = false }) {
+  // El nombre sale de la fecha de inicio; solo administración lo ajusta a mano.
+  const [nombreManual, setNombreManual] = useState(guardado?.nombre ?? null)
   const [fechaInicio, setFechaInicio] = useState(guardado?.fechaInicio ?? '')
+  const nombreCalculado = nombrePeriodoDesde(fechaInicio)
+  const nombre = nombreManual ?? nombreCalculado
   const [fechaFin, setFechaFin] = useState(guardado?.fechaFin ?? '')
   const [fechas, setFechas] = useState(() => fechasDe(guardado))
   const [erroresFechas, setErroresFechas] = useState([])
@@ -58,6 +64,9 @@ export function FormularioPeriodo({ guardado, onGuardar, onCancelar }) {
     )
     const periodo = { nombre: nombre.trim(), fechaInicio, fechaFin, etapas }
     const errores = validarFechasPeriodo(periodo)
+    if (nombreManual !== null && nombreManual.trim() !== guardado?.nombre && !nombrePeriodoValido(nombreManual.trim())) {
+      errores.unshift(`Nombre: usa el formato AAAA-1 o AAAA-2, por ejemplo ${nombreCalculado || '2027-1'}`)
+    }
     setErroresFechas(errores)
     setErrorEnvio(null)
     if (errores.length > 0) {
@@ -81,15 +90,23 @@ export function FormularioPeriodo({ guardado, onGuardar, onCancelar }) {
     >
       <form className="periodos__formulario" onSubmit={enviar}>
         <div className="periodos__datos">
-          <Campo id="nombrePeriodo" etiqueta="Nombre">
+          <Campo
+            id="nombrePeriodo"
+            etiqueta="Nombre"
+            ayuda={
+              puedeAjustarNombre
+                ? 'Se calcula con la fecha de inicio (enero a junio: AAAA-1; julio a diciembre: AAAA-2; regla por confirmar). Puedes ajustarlo.'
+                : 'Se calcula con la fecha de inicio (enero a junio: AAAA-1; julio a diciembre: AAAA-2; regla por confirmar).'
+            }
+          >
             <input
               id="nombrePeriodo"
               className="campo__control"
               value={nombre}
               maxLength={20}
-              placeholder="2027-1"
-              onChange={(e) => setNombre(e.target.value)}
-              required
+              placeholder="Elige la fecha de inicio"
+              readOnly={!puedeAjustarNombre}
+              onChange={(e) => puedeAjustarNombre && setNombreManual(e.target.value)}
             />
           </Campo>
           <Campo id="fechaInicioPeriodo" etiqueta="Inicio">
@@ -196,6 +213,7 @@ function EtapasDe({ periodo, ventanas }) {
 
 export default function Periodos() {
   const { confirmar } = useAvisos()
+  const { usuario } = useSesion()
   const periodos = useFetch(listarPeriodos)
   const { ventanas, recargar: recargarActivo } = usePeriodoActivo()
   const [enEdicion, setEnEdicion] = useState(null)
@@ -260,6 +278,7 @@ export default function Periodos() {
 
   const lista = periodos.datos ?? []
   const activo = lista.find((p) => p.esActivo)
+  const paginacion = usePaginacion(lista)
 
   return (
     <>
@@ -276,6 +295,7 @@ export default function Periodos() {
           guardado={enEdicion}
           onGuardar={guardar}
           onCancelar={() => setEnEdicion(null)}
+          puedeAjustarNombre={usuario?.rol === 'ADMINISTRADOR'}
         />
 
         {periodos.cargando && !periodos.datos && <Cargando texto="Cargando periodos" bloques={2} />}
@@ -288,7 +308,7 @@ export default function Periodos() {
           <EstadoVista titulo="Aún no hay periodos" mensaje="Crea el primero con el formulario de arriba." />
         )}
 
-        {lista.map((periodo) => (
+        {paginacion.visibles.map((periodo) => (
           <Panel
             key={periodo.idPeriodo}
             titulo={periodo.nombre}
@@ -312,6 +332,7 @@ export default function Periodos() {
             <EtapasDe periodo={periodo} ventanas={ventanas} />
           </Panel>
         ))}
+        {lista.length > 0 && <Paginacion {...paginacion} etiqueta="periodos académicos" />}
       </div>
     </>
   )

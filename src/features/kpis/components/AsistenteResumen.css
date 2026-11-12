@@ -1,10 +1,10 @@
 .asistente {
   position: relative;
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-columns: minmax(0, 138px) minmax(0, 1fr);
   align-items: center;
   gap: 26px;
-  padding: 22px 26px;
+  padding: 22px clamp(16px, 2.4vw, 26px);
   overflow: hidden;
   border: 1px solid var(--color-borde-suave);
   border-radius: 20px;
@@ -18,8 +18,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 150px;
-  height: 150px;
+  width: 138px;
+  height: 138px;
   border: 5px solid var(--color-amarillo);
   border-radius: 50%;
   background: var(--color-crema);
@@ -36,6 +36,8 @@
 /* Globo de diálogo con su colita hacia el robot */
 .asistente__globo {
   position: relative;
+  min-width: 0;
+  overflow-wrap: anywhere;
   padding: 18px 20px;
   border: 1px solid var(--color-borde);
   border-radius: 16px;
@@ -76,7 +78,7 @@
 
 .asistente__mensajes {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr));
   gap: 8px 18px;
   padding: 0;
   margin: 12px 0 0;
@@ -126,12 +128,14 @@
   color: var(--color-crema);
   font-size: 14px;
   font-weight: var(--peso-semi);
+  transition: background-color 150ms ease, transform 150ms ease;
 }
 
 .asistente__accion:hover {
   background: var(--color-azul-oscuro);
   color: var(--color-crema);
   text-decoration: none;
+  transform: translateY(-1px);
 }
 
 .asistente__nota {
@@ -156,6 +160,28 @@
   }
 }
 
+@media (max-width: 1180px) and (min-width: 901px) {
+  .asistente {
+    grid-template-columns: 104px minmax(0, 1fr);
+    gap: 16px;
+    padding: 18px;
+  }
+
+  .asistente__robot {
+    width: 104px;
+    height: 104px;
+    border-width: 4px;
+  }
+
+  .asistente__robot img {
+    width: 76px;
+  }
+
+  .asistente__mensajes {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
 @media (max-width: 900px) {
   .asistente {
     grid-template-columns: 1fr;
@@ -174,6 +200,7 @@
 
   .asistente__globo {
     justify-self: stretch;
+    width: 100%;
   }
 
   /* En columna, la colita apunta hacia arriba, al robot */
@@ -185,5 +212,12 @@
 
   .asistente__mensajes {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .asistente__robot,
+  .asistente__robot img {
+    animation: none;
   }
 }

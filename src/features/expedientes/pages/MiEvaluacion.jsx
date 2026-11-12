@@ -14,6 +14,7 @@ import { obtenerConfiguracionEvaluacion } from '../../kpis/services/configuracio
 import { LineaTiempo } from '../../periodos/components/LineaTiempo.jsx'
 import { PanelProcesoPropio } from '../../proceso/components/PanelProcesoPropio.jsx'
 import { PanelCompromisos } from '../components/PanelesExpediente.jsx'
+import { PanelComparativoPrograma } from '../components/PanelComparativoPrograma.jsx'
 import { obtenerExpedientePropio } from '../services/expedientesService.js'
 import './MiEvaluacion.css'
 
@@ -130,6 +131,7 @@ export default function MiEvaluacion() {
             <PanelHallazgosPropios />
           </div>
           <PanelSeguimientoPlan />
+          {completo && <PanelComparativoPrograma propio />}
           </>
         )}
       </div>

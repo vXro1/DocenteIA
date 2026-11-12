@@ -19,11 +19,20 @@ import './FormularioUsuario.css'
 import { useAvisos } from '../../../shared/components/ui/Avisos/avisosContext.js'
 
 /** En el orden en que más se usan: casi todas las cuentas nuevas son de docentes. */
-const ROLES_ORDENADOS = [ROLES.DOCENTE, ROLES.ESTUDIANTE, ROLES.COORDINADOR, ROLES.VICERRECTOR]
+const ROLES_ORDENADOS = [
+  ROLES.DOCENTE,
+  ROLES.ESTUDIANTE,
+  ROLES.COORDINADOR,
+  ROLES.VICERRECTOR,
+  ROLES.ADMINISTRADOR,
+  ROLES.VISUALIZADOR,
+]
 
 const DESCRIPCION_ROL = {
-  VICERRECTOR: 'Alcance institucional: administra periodos, usuarios y ve todas las facultades.',
-  COORDINADOR: 'Ve y califica a los docentes de su facultad y carga el CSV de estudiantes.',
+  VICERRECTOR: 'Alcance institucional: paneles, decisión de fechas y corrección de actas.',
+  ADMINISTRADOR: 'Usuarios, programas, ponderaciones y fechas. No ve notas, comentarios ni actas.',
+  VISUALIZADOR: 'Solo lectura de paneles agregados, sin datos individuales.',
+  COORDINADOR: 'Ve y coevalúa a los docentes de su facultad.',
   DOCENTE: 'Consulta su propia evaluación, sin notas individuales por fuente.',
   ESTUDIANTE: 'Califica a sus profesores por cada clase en la que está matriculado.',
 }
@@ -440,7 +449,7 @@ function Formulario({ guardado, registrarSalida }) {
               {requierePrograma(rol) && (
                 <Campo
                   id="idPrograma"
-                  etiqueta={rol === ROLES.ESTUDIANTE ? 'Programa (carrera) del estudiante' : 'Programa del docente'}
+                  etiqueta={rol === ROLES.ESTUDIANTE ? 'Programa del estudiante' : 'Programa del docente'}
                   error={errorDe('idPrograma')}
                 >
                   <select

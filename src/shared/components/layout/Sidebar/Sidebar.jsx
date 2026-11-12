@@ -1,6 +1,5 @@
 import {
   BookOpen,
-  Building2,
   CalendarDays,
   CalendarRange,
   ChartColumn,
@@ -8,7 +7,6 @@ import {
   ClipboardCheck,
   ClipboardList,
   FileSignature,
-  FileUp,
   GraduationCap,
   LayoutDashboard,
   Lightbulb,
@@ -17,7 +15,6 @@ import {
   MessagesSquare,
   PenLine,
   Scale,
-  ScrollText,
   Settings,
   UserCog,
   Users,
@@ -45,8 +42,6 @@ const NAVEGACION = {
     { ruta: '/estadisticas', etiqueta: 'Estadísticas', Icono: ChartColumnBig },
     { ruta: '/docentes', etiqueta: 'Docentes', Icono: Users },
     { ruta: '/coevaluaciones', etiqueta: 'Coevaluaciones', Icono: ClipboardList },
-    { ruta: '/importaciones', etiqueta: 'Evaluación de estudiantes', Icono: FileUp },
-    { ruta: '/matricula', etiqueta: 'Matrícula y cobertura', Icono: GraduationCap },
     { ruta: '/analisis', etiqueta: 'Análisis de comentarios', Icono: MessagesSquare },
     { ruta: '/agenda', etiqueta: 'Agenda de citas', Icono: CalendarDays },
     { ruta: '/acciones-sugeridas', etiqueta: 'Acciones sugeridas', Icono: Lightbulb },
@@ -56,18 +51,20 @@ const NAVEGACION = {
     { ruta: '/inicio', etiqueta: 'Inicio', Icono: LayoutDashboard },
     { ruta: '/estadisticas', etiqueta: 'Estadísticas', Icono: ChartColumnBig },
     { ruta: '/docentes', etiqueta: 'Docentes', Icono: Users },
-    { ruta: '/importaciones', etiqueta: 'Cargas de estudiantes', Icono: FileUp },
-    { ruta: '/matricula', etiqueta: 'Matrícula y cobertura', Icono: GraduationCap },
     { ruta: '/analisis', etiqueta: 'Análisis de comentarios', Icono: MessagesSquare },
     { ruta: '/acciones-sugeridas', etiqueta: 'Acciones sugeridas', Icono: Lightbulb },
     { ruta: '/panel-programas', etiqueta: 'Panel por programa', Icono: ChartColumn },
     { ruta: '/periodos', etiqueta: 'Periodos', Icono: CalendarRange },
-    { ruta: '/ponderaciones', etiqueta: 'Ponderaciones', Icono: Scale },
-    { ruta: '/facultades', etiqueta: 'Facultades', Icono: Building2 },
-    { ruta: '/programas', etiqueta: 'Programas', Icono: BookOpen },
-    { ruta: '/usuarios', etiqueta: 'Usuarios', Icono: UserCog },
-    { ruta: '/auditoria', etiqueta: 'Auditoría', Icono: ScrollText },
   ],
+  // Administración: usuarios, catálogos, ponderaciones y fechas. No ve notas ni comentarios.
+  [ROLES.ADMINISTRADOR]: [
+    { ruta: '/usuarios', etiqueta: 'Usuarios', Icono: UserCog },
+    { ruta: '/programas', etiqueta: 'Programas', Icono: BookOpen },
+    { ruta: '/ponderaciones', etiqueta: 'Ponderaciones', Icono: Scale },
+    { ruta: '/periodos', etiqueta: 'Periodos', Icono: CalendarRange },
+  ],
+  // Visualización: solo paneles agregados.
+  [ROLES.VISUALIZADOR]: [{ ruta: '/panel-programas', etiqueta: 'Panel por programa', Icono: ChartColumn }],
 }
 
 function ContadorCoevaluaciones() {
