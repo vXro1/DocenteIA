@@ -12,7 +12,7 @@ export const ETAPAS_PERIODO = [
   {
     etapa: ETAPAS.RECOLECCION_CALIFICACIONES,
     nombre: 'Recolección de calificaciones',
-    habilita: 'Calificar y cargar el CSV de estudiantes.',
+    habilita: 'Responder los formularios de estudiantes, coordinación y docente.',
   },
   {
     etapa: ETAPAS.REVISION_HALLAZGOS,
@@ -41,4 +41,29 @@ export function validarFechasPeriodo({ fechaInicio, fechaFin, etapas }) {
     }
   }
   return errores
+}
+
+/** Estado de una etapa según sus fechas; las etapas pueden solaparse, así que no depende del orden. */
+export function estadoEtapa(etapa, hoy) {
+  if (!etapa.fechaApertura || !etapa.fechaCierre) return 'sin'
+  if (etapa.fechaCierre < hoy) return 'terminada'
+  if (etapa.fechaApertura > hoy) return 'proxima'
+  return 'abierta'
+}
+
+/** Último mes del primer semestre. Regla por confirmar con la institución; el backend usa la misma. */
+export const MES_FIN_PRIMER_SEMESTRE = 6
+
+const FORMATO_NOMBRE = /^\d{4}-[12]$/
+
+/** Nombre del periodo según su fecha de inicio: AAAA-1 de enero a junio, AAAA-2 de julio a diciembre. */
+export function nombrePeriodoDesde(fechaInicio) {
+  const [anio, mes] = (fechaInicio ?? '').split('-').map(Number)
+  if (!anio || !mes) return ''
+  return `${anio}-${mes <= MES_FIN_PRIMER_SEMESTRE ? 1 : 2}`
+}
+
+/** Un nombre ajustado a mano solo es válido como AAAA-1 o AAAA-2. */
+export function nombrePeriodoValido(nombre) {
+  return FORMATO_NOMBRE.test(nombre)
 }

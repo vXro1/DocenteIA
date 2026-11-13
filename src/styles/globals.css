@@ -4,9 +4,16 @@
   box-sizing: border-box;
 }
 
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 72px;
+}
+
 body {
   margin: 0;
-  background: var(--color-fondo);
+  background:
+    radial-gradient(ellipse at 92% 4%, rgba(226, 241, 250, 0.52), transparent 30%),
+    var(--color-fondo);
   color: var(--color-texto);
   font-family: var(--fuente-base);
   font-weight: var(--peso-normal);
@@ -30,6 +37,12 @@ a:hover {
   text-decoration: underline;
 }
 
+/* Un enlace dentro de un texto no puede depender solo del color para distinguirse (WCAG 1.4.1). */
+p a:not([class]) {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
 input,
 select,
 button,
@@ -49,6 +62,9 @@ textarea {
 
 .solo-lectores {
   position: absolute;
+  /* Sin left quedaría en su posición estática: dentro de una fila con desplazamiento (el menú en el
+     celular) ensancharía la página. */
+  left: 0;
   width: 1px;
   height: 1px;
   overflow: hidden;
@@ -125,11 +141,17 @@ legend.rotulo,
 }
 
 @media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
   *,
   *::before,
   *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
   }
 }
 
@@ -205,6 +227,15 @@ textarea.campo__control {
 .campo__error {
   font-size: 12px;
   color: var(--color-error);
+}
+
+.campo__ayuda,
+.campo__error,
+.aviso__contenido,
+.estado-vista__mensaje,
+.panel__descripcion,
+.tabla td {
+  overflow-wrap: anywhere;
 }
 
 /* Tabla de datos del maquetado */
@@ -302,6 +333,31 @@ textarea.campo__control {
   color: var(--color-texto-apagado);
 }
 
+.pildora--turquesa {
+  background: var(--color-turquesa-fondo);
+  color: var(--color-turquesa);
+}
+
+.pildora--violeta {
+  background: var(--color-violeta-fondo);
+  color: var(--color-violeta);
+}
+
+.pildora--coral {
+  background: var(--color-coral-fondo);
+  color: var(--color-coral);
+}
+
+.pildora--cielo {
+  background: var(--color-cielo-fondo);
+  color: var(--color-cielo);
+}
+
+.pildora--rosa {
+  background: var(--color-rosa-fondo);
+  color: var(--color-rosa);
+}
+
 /* Formularios cortos en línea y acciones de una fila */
 .formulario-simple {
   display: flex;
@@ -325,4 +381,187 @@ textarea.campo__control {
 .tabla-contenedor,
 .docentes__desplazable {
   position: relative;
+}
+
+/* Tabla que en pantallas angostas se vuelve una lista de tarjetas: cada celda lleva su rótulo en
+   data-etiqueta, así no hay desplazamiento horizontal escondido. */
+@media (max-width: 720px) {
+  .tabla--apilable thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+  }
+
+  .tabla--apilable,
+  .tabla--apilable tbody,
+  .tabla--apilable tr,
+  .tabla--apilable th,
+  .tabla--apilable td {
+    display: block;
+    width: 100%;
+  }
+
+  .tabla--apilable tr {
+    margin-bottom: 10px;
+    padding: 10px 12px;
+    border: 1px solid var(--color-borde-suave);
+    border-radius: var(--radio-lg);
+    background: var(--color-superficie);
+  }
+
+  .tabla--apilable th,
+  .tabla--apilable td {
+    padding: 6px 0;
+    border: 0;
+    text-align: left;
+  }
+
+  .tabla--apilable td[data-etiqueta]::before {
+    content: attr(data-etiqueta);
+    display: block;
+    margin-bottom: 2px;
+    font-size: 11px;
+    font-weight: var(--peso-semi);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--color-texto-tenue);
+  }
+
+  .tabla--apilable {
+    min-width: 0 !important;
+  }
+
+  /* Tablas de solo cifras: etiqueta y valor en la misma línea. */
+  .tabla--apilable.tabla--cifras td[data-etiqueta] {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 4px 0;
+    border-top: 1px dashed var(--color-borde-suave);
+  }
+
+  .tabla--apilable.tabla--cifras td[data-etiqueta]::before {
+    margin: 0;
+  }
+
+  .tabla-contenedor:has(.tabla--apilable) {
+    overflow: visible;
+    border: 0;
+    background: transparent;
+  }
+}
+
+/* Filtros de Docentes a todo el ancho en el celular. */
+@media (max-width: 720px) {
+  .docentes__selector,
+  .docentes__selector select {
+    flex: 1 1 100%;
+    width: 100%;
+  }
+}
+
+/* ===== Sistema visual: movimiento, foco y superficies (alineado con la presentación) ===== */
+@keyframes entrar-suave {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes brillo-esqueleto {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+
+:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 3px solid var(--color-foco);
+  outline-offset: 2px;
+}
+
+.pagina > * {
+  animation: entrar-suave var(--transicion-media) both;
+}
+
+.pagina > *:nth-child(2) {
+  animation-delay: 40ms;
+}
+
+.pagina > *:nth-child(3) {
+  animation-delay: 80ms;
+}
+
+.pagina > *:nth-child(n + 4) {
+  animation-delay: 120ms;
+}
+
+.panel:hover {
+  box-shadow: var(--sombra-elevada);
+}
+
+.boton {
+  transition:
+    transform var(--transicion-rapida),
+    box-shadow var(--transicion-rapida),
+    background-color var(--transicion-rapida),
+    border-color var(--transicion-rapida),
+    color var(--transicion-rapida);
+}
+
+.boton:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.boton:active:not(:disabled) {
+  transform: translateY(0) scale(0.98);
+}
+
+.tabla tbody tr {
+  transition: background-color var(--transicion-rapida);
+}
+
+.tabla tbody tr:hover {
+  background: var(--color-azul-fondo);
+}
+
+.campo__control {
+  transition: border-color var(--transicion-rapida), box-shadow var(--transicion-rapida);
+}
+
+.campo__control:hover:not(:disabled) {
+  border-color: var(--color-azul);
+}
+
+.campo__control:focus {
+  border-color: var(--color-azul);
+  box-shadow: 0 0 0 4px rgba(5, 54, 134, 0.12);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pagina > *,
+  .boton,
+  .panel,
+  .tabla tbody tr {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .boton:hover:not(:disabled),
+  .boton:active:not(:disabled) {
+    transform: none;
+  }
+}
+
+/* Una tabla solo para lectores de pantalla no debe ensanchar la página: la tabla ignora width. */
+table.solo-lectores {
+  display: block;
 }

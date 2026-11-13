@@ -8,9 +8,13 @@ import { Campo } from '../../../shared/components/ui/Campo/Campo.jsx'
 import { ErrorApi } from '../../../shared/components/ui/ErrorApi/ErrorApi.jsx'
 import { Cargando, EstadoVista } from '../../../shared/components/ui/EstadoVista/EstadoVista.jsx'
 import { Panel } from '../../../shared/components/ui/Panel/Panel.jsx'
+import { Paginacion } from '../../../shared/components/ui/Paginacion/Paginacion.jsx'
 import { useFetch } from '../../../shared/hooks/useFetch.js'
+import { usePaginacion } from '../../../shared/hooks/usePaginacion.js'
 import { formatearFecha } from '../../../shared/utils/formatters.js'
-import { ETAPAS_PERIODO, validarFechasPeriodo } from '../etapas.js'
+import { ApiError } from '../../../services/api.js'
+import { ETAPAS_PERIODO, nombrePeriodoDesde, nombrePeriodoValido, validarFechasPeriodo } from '../etapas.js'
+import { useSesion } from '../../auth/sesionContext.js'
 import {
   activarPeriodo,
   actualizarPeriodo,
@@ -19,8 +23,12 @@ import {
   listarPeriodos,
 } from '../services/periodosService.js'
 import './Periodos.css'
+import { AvisoFlotante } from '../../../shared/components/ui/Avisos/AvisoFlotante.jsx'
+import { useAvisos } from '../../../shared/components/ui/Avisos/avisosContext.js'
 
 const NOMBRES_CAMPOS = { nombre: 'Nombre', fechaInicio: 'Inicio', fechaFin: 'Fin', etapas: 'Etapas' }
+
+const CANCELADO = Symbol('activación cancelada')
 
 function fechasDe(periodo) {
   return Object.fromEntries(
@@ -31,9 +39,12 @@ function fechasDe(periodo) {
   )
 }
 
-export function FormularioPeriodo({ guardado, onGuardar, onCancelar }) {
-  const [nombre, setNombre] = useState(guardado?.nombre ?? '')
+export function FormularioPeriodo({ guardado, onGuardar, onCancelar, puedeAjustarNombre = false }) {
+  // El nombre sale de la fecha de inicio; solo administración lo ajusta a mano.
+  const [nombreManual, setNombreManual] = useState(guardado?.nombre ?? null)
   const [fechaInicio, setFechaInicio] = useState(guardado?.fechaInicio ?? '')
+  const nombreCalculado = nombrePeriodoDesde(fechaInicio)
+  const nombre = nombreManual ?? nombreCalculado
   const [fechaFin, setFechaFin] = useState(guardado?.fechaFin ?? '')
   const [fechas, setFechas] = useState(() => fechasDe(guardado))
   const [erroresFechas, setErroresFechas] = useState([])
@@ -53,6 +64,9 @@ export function FormularioPeriodo({ guardado, onGuardar, onCancelar }) {
     )
     const periodo = { nombre: nombre.trim(), fechaInicio, fechaFin, etapas }
     const errores = validarFechasPeriodo(periodo)
+    if (nombreManual !== null && nombreManual.trim() !== guardado?.nombre && !nombrePeriodoValido(nombreManual.trim())) {
+      errores.unshift(`Nombre: usa el formato AAAA-1 o AAAA-2, por ejemplo ${nombreCalculado || '2027-1'}`)
+    }
     setErroresFechas(errores)
     setErrorEnvio(null)
     if (errores.length > 0) {
@@ -76,15 +90,23 @@ export function FormularioPeriodo({ guardado, onGuardar, onCancelar }) {
     >
       <form className="periodos__formulario" onSubmit={enviar}>
         <div className="periodos__datos">
-          <Campo id="nombrePeriodo" etiqueta="Nombre">
+          <Campo
+            id="nombrePeriodo"
+            etiqueta="Nombre"
+            ayuda={
+              puedeAjustarNombre
+                ? 'Se calcula con la fecha de inicio (enero a junio: AAAA-1; julio a diciembre: AAAA-2; regla por confirmar). Puedes ajustarlo.'
+                : 'Se calcula con la fecha de inicio (enero a junio: AAAA-1; julio a diciembre: AAAA-2; regla por confirmar).'
+            }
+          >
             <input
               id="nombrePeriodo"
               className="campo__control"
               value={nombre}
               maxLength={20}
-              placeholder="2027-1"
-              onChange={(e) => setNombre(e.target.value)}
-              required
+              placeholder="Elige la fecha de inicio"
+              readOnly={!puedeAjustarNombre}
+              onChange={(e) => puedeAjustarNombre && setNombreManual(e.target.value)}
             />
           </Campo>
           <Campo id="fechaInicioPeriodo" etiqueta="Inicio">
@@ -190,6 +212,8 @@ function EtapasDe({ periodo, ventanas }) {
 }
 
 export default function Periodos() {
+  const { confirmar } = useAvisos()
+  const { usuario } = useSesion()
   const periodos = useFetch(listarPeriodos)
   const { ventanas, recargar: recargarActivo } = usePeriodoActivo()
   const [enEdicion, setEnEdicion] = useState(null)
@@ -214,41 +238,64 @@ export default function Periodos() {
     if (
       !periodo.esActivo &&
       activo &&
-      !window.confirm(
-        `Solo puede haber un periodo activo. Activar ${periodo.nombre} desactivará ${activo.nombre}. ¿Continuar?`,
-      )
+      !(await confirmar({
+        tipo: 'alerta',
+        titulo: `¿Activar ${periodo.nombre}?`,
+        mensaje: `Solo puede haber un periodo activo: ${activo.nombre} quedará desactivado.`,
+        textoConfirmar: 'Activar',
+      }))
     ) {
       return
     }
     setErrorAccion(null)
     setResultado(null)
     try {
-      await (periodo.esActivo ? desactivarPeriodo(periodo.idPeriodo) : activarPeriodo(periodo.idPeriodo))
+      if (periodo.esActivo) await desactivarPeriodo(periodo.idPeriodo)
+      else await activarConConfirmacion(periodo)
       setResultado(`Periodo ${periodo.nombre} ${periodo.esActivo ? 'desactivado' : 'activado'}.`)
       recargar()
     } catch (error) {
-      setErrorAccion(error)
+      if (error !== CANCELADO) setErrorAccion(error)
+    }
+  }
+
+  // Un periodo sin matrículas deja a los estudiantes sin profesores: el backend pide confirmarlo.
+  async function activarConConfirmacion(periodo) {
+    try {
+      await activarPeriodo(periodo.idPeriodo)
+    } catch (error) {
+      if (!(error instanceof ApiError) || error.status !== 409) throw error
+      const seguir = await confirmar({
+        tipo: 'alerta',
+        titulo: `${periodo.nombre} no tiene matrículas`,
+        mensaje: error.message,
+        textoConfirmar: 'Activar de todos modos',
+      })
+      if (!seguir) throw CANCELADO
+      await activarPeriodo(periodo.idPeriodo, true)
     }
   }
 
   const lista = periodos.datos ?? []
   const activo = lista.find((p) => p.esActivo)
+  const paginacion = usePaginacion(lista)
 
   return (
     <>
       <Encabezado
-        miga="Vicerrectoría · Periodos"
+        miga={`${usuario?.rol === 'ADMINISTRADOR' ? 'Administración' : 'Vicerrectoría'} · Periodos`}
         titulo="Periodos académicos"
         subtitulo="Crea los periodos, define las ventanas de cada etapa y activa el periodo en curso."
       />
       <div className="pagina">
-        {resultado && <Aviso tipo="exito" titulo={resultado} />}
+        <AvisoFlotante mensaje={resultado} />
         <ErrorApi error={errorAccion} />
         <FormularioPeriodo
           key={`${enEdicion?.idPeriodo ?? 'nuevo'}-${version}`}
           guardado={enEdicion}
           onGuardar={guardar}
           onCancelar={() => setEnEdicion(null)}
+          puedeAjustarNombre={usuario?.rol === 'ADMINISTRADOR'}
         />
 
         {periodos.cargando && !periodos.datos && <Cargando texto="Cargando periodos" bloques={2} />}
@@ -261,7 +308,7 @@ export default function Periodos() {
           <EstadoVista titulo="Aún no hay periodos" mensaje="Crea el primero con el formulario de arriba." />
         )}
 
-        {lista.map((periodo) => (
+        {paginacion.visibles.map((periodo) => (
           <Panel
             key={periodo.idPeriodo}
             titulo={periodo.nombre}
@@ -285,6 +332,7 @@ export default function Periodos() {
             <EtapasDe periodo={periodo} ventanas={ventanas} />
           </Panel>
         ))}
+        {lista.length > 0 && <Paginacion {...paginacion} etiqueta="periodos académicos" />}
       </div>
     </>
   )

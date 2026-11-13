@@ -3,6 +3,8 @@ export const ROLES = {
   COORDINADOR: 'COORDINADOR',
   DOCENTE: 'DOCENTE',
   ESTUDIANTE: 'ESTUDIANTE',
+  ADMINISTRADOR: 'ADMINISTRADOR',
+  VISUALIZADOR: 'VISUALIZADOR',
 }
 
 export const ETIQUETA_ROL = {
@@ -10,6 +12,8 @@ export const ETIQUETA_ROL = {
   COORDINADOR: 'Coordinación',
   DOCENTE: 'Docente',
   ESTUDIANTE: 'Estudiante',
+  ADMINISTRADOR: 'Administración',
+  VISUALIZADOR: 'Visualización',
 }
 
 export const ETIQUETA_FUENTE = {
@@ -19,7 +23,7 @@ export const ETIQUETA_FUENTE = {
 }
 
 export const ORIGEN_FUENTE = {
-  ESTUDIANTES: 'Sincronizado del sistema de encuestas',
+  ESTUDIANTES: 'Formulario de los estudiantes',
   COORDINACION: 'Registrada por coordinación',
   AUTOEVALUACION: 'Registrada por el docente',
 }
@@ -65,17 +69,6 @@ export const ETAPAS = {
   AGENDA_CITAS: 'AGENDA_CITAS',
   FIRMA_ACTAS: 'FIRMA_ACTAS',
 }
-
-/** Campos que reconoce la carga del CSV de estudiantes (CampoImportacion del backend). */
-export const CAMPOS_IMPORTACION = [
-  { campo: 'CORREO_DOCENTE', nombre: 'Correo del docente', obligatorio: true },
-  { campo: 'DOMINIO_DISCIPLINAR', nombre: 'Dominio disciplinar', obligatorio: true },
-  { campo: 'PLANEACION_ACADEMICA', nombre: 'Planeación académica', obligatorio: true },
-  { campo: 'METODOLOGIA_ENSENANZA', nombre: 'Metodología de enseñanza', obligatorio: true },
-  { campo: 'EVALUACION_APRENDIZAJE', nombre: 'Evaluación del aprendizaje', obligatorio: true },
-  { campo: 'COMPROMISO_INSTITUCIONAL', nombre: 'Compromiso institucional', obligatorio: true },
-  { campo: 'COMENTARIO', nombre: 'Comentario', obligatorio: false },
-]
 
 export const ETIQUETA_ORIGEN_MAPEO = {
   MANUAL: 'Mapeo manual',
